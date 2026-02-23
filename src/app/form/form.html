@@ -1,0 +1,30 @@
+<div class="form-container">
+    <form action="">
+        <div class="tarea">
+            <label>Tarea</label>
+            <input [(ngModel)]="textoTarea" type="text" name="textoTarea" maxlength="50" required/>
+            @if(intentoEnviar && textoTarea === ""){
+                <div class="error">
+                    El texto de la tarea es obligatorio (Max. 50 caracteres)
+                </div>
+            }
+        </div>
+        <div class="prioridad">
+            <label>Prioridad</label>
+            <select [(ngModel)]="prioridadTarea" name="prioridadTarea" id="select-prioridad">
+                <option value="">Seleccionar prioridad</option>
+                <option value="Baja">Baja</option>
+                <option value="Media">Media</option>
+                <option value="Alta">Alta</option>
+            </select>
+            @if(intentoEnviar && prioridadTarea === ""){
+                <div class="error">
+                    La prioridad es obligatoria
+                </div>
+            }
+        </div>
+        <div class="boton-añadir">
+            <button type="button" (click)="crearYEnviarTarea()">Añadir</button>
+        </div>
+    </form>
+</div>

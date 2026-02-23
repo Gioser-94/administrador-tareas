@@ -1,0 +1,82 @@
+.tabla-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(0, 0, 0, 0.1);
+  overflow-x: auto;
+  width: 100%;
+
+}
+
+tr {
+    border: 2px solid rgb(147, 144, 144);
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: center;
+}
+
+table {
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+/* PRIORIDADES */
+
+.prio-baja {
+  background-color: #d4edda;
+}
+
+.prio-media {
+  background-color: #fff3cd;
+}
+
+.prio-alta {
+  background-color: #f8d7da;
+}
+
+.completada {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* BOTONES */
+.botones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-completar {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-completar:hover {
+    background-color: rgb(112, 214, 112);
+    color: rgb(0, 0, 0);
+}
+
+.btn-borrar {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-borrar:hover {
+    background-color: rgb(239, 106, 106);
+    color: rgb(0, 0, 0);
+}

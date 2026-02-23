@@ -1,0 +1,25 @@
+<div class="tabla-container">
+    @if(tareasList.length > 0){
+    <table>
+        <thead>
+            <tr>
+                <th>Tarea</th>
+                <th>Prioridad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(tarea of tareasList; track tarea.id){
+            <tr [ngClass]="[prioridadAClase[tarea.prioridad], tarea.estado ? 'completada' : '']">
+                <td>{{tarea.texto}}</td>
+                <td>{{tarea.prioridad}}</td>
+                <td class="botones">
+                    <button class="btn-completar" (click)="completarTarea(tarea)">Completar</button>
+                    <button class="btn-borrar" (click)="borrarTarea(tarea.id)">Borrar</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+</div>
