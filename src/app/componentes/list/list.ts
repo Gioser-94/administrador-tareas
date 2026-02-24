@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Tarea } from '../interfaces/tarea';
+import { Tarea } from '../../interfaces/tarea';
 import { CommonModule } from '@angular/common';
 
 
@@ -12,8 +12,8 @@ import { CommonModule } from '@angular/common';
 export class List {
 
   @Input() tareasList: Tarea[] = [];
-  @Output() enviarIdBorrado = new EventEmitter<number>();
-  @Output() enviarIdCompletado = new EventEmitter<number>();
+  @Output() enviarTareaBorrada = new EventEmitter<Tarea>();
+  @Output() enviarTareaCompletada = new EventEmitter<Tarea>();
 
   // Propiedad para poder asignar las diferentes clases de los options
   prioridadAClase = {
@@ -26,11 +26,11 @@ export class List {
   // cambia su estado y emite el id de esa tarea para que app lo reciba
   completarTarea(tarea: Tarea) {
     tarea.estado = true;
-    this.enviarIdCompletado.emit(tarea.id);
+    this.enviarTareaCompletada.emit(tarea);
   };
 
   // Se envia el id de la tarea borrada a app
-  borrarTarea(id: number){
-    this.enviarIdBorrado.emit(id);
+  borrarTarea(tarea: Tarea){
+    this.enviarTareaBorrada.emit(tarea);
   };
 }

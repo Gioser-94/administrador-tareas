@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Tarea } from '../interfaces/tarea';
+import { Tarea } from '../../interfaces/tarea';
 
 @Component({
   selector: 'app-form',

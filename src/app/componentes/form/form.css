@@ -5,25 +5,41 @@
     padding: 1rem;
     background: #f5f5f5;
     border-radius: 8px;
-    box-shadow: 0 2px 8px var(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow-x: auto;
     width: 100%;
 }
 
-.tarea {
-    display: flex;
-    gap: 18px;
-    margin-block: 5px;
-}
-
+.tarea,
 .prioridad {
     display: flex;
+    align-items: flex-start;
     gap: 10px;
     margin-block: 5px;
 }
 
+.tarea label,
+.prioridad label {
+    width: 80px;
+}
+
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 260px;
+}
+
+.control input,
+.control select {
+    width: 100%;
+}
+
 .error {
-    color: red;
+  min-height: 1rem;
+  font-size: 0.80rem;
+  color: red;
+  margin-left: 0;
 }
 
 .boton-añadir {

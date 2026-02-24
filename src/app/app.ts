@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Form } from './form/form';
-import { List } from './list/list';
+import { Form } from './componentes/form/form';
+import { List } from './componentes/list/list';
 import { Tarea } from './interfaces/tarea';
 
 @Component({
@@ -11,7 +11,7 @@ import { Tarea } from './interfaces/tarea';
 })
 export class App implements OnInit{
 
-  private storageKey = 'tareas';
+  private readonly storageKey = 'tareas';
 
   tareas: Tarea[] = [];
 
@@ -35,13 +35,12 @@ export class App implements OnInit{
   recibirTarea(tarea: Tarea){
     this.tareas.push(tarea);
     this.guardar();
-    console.log(this.tareas);
   }
 
   // Al recibir el id del elemento borrado, creamos un nuevo array sin contar
   // con el borrado y lo guardamos de nuevo en ambos lados
-  filtrarListaBorrados(id: number){
-    let nuevaLista = this.tareas.filter(tareaOld => tareaOld.id !== id);
+  borrarTarea(tareaBorrada: Tarea){
+    let nuevaLista = this.tareas.filter(tareaOld => tareaOld.id !== tareaBorrada.id);
     this.tareas = nuevaLista;
     this.guardar();
   }
@@ -49,9 +48,12 @@ export class App implements OnInit{
   // Se recibe el id de la tarea completada, y si se encuentra en el array
   // de tareas, se le cambia el estado, si no se encontrase devuelve undefined (?),
   // vuelve a guardar en localStorage
-  filtarListaCompletados(id: number){
-    this.tareas.find(tarea => tarea.id === id)?.estado === true;
-    this.guardar();
+  completarTarea(tareaCompletada: Tarea){
+    const tarea = this.tareas.find(tarea => tarea.id === tareaCompletada.id);
+    if(tarea) {
+      tarea.estado = true;
+      this.guardar();
+    }
   }
 
   // Metodo para guardar las tareas en localStorage

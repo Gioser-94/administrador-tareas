@@ -2,6 +2,6 @@
 <app-form (enviarTarea)="recibirTarea($event)"></app-form>
 <app-list 
     [tareasList]="tareas"
-    (enviarIdBorrado)="filtrarListaBorrados($event)"
-    (enviarIdCompletado)="filtarListaCompletados($event)"
+    (enviarTareaBorrada)="borrarTarea($event)"
+    (enviarTareaCompletada)="completarTarea($event)"
 ></app-list>
