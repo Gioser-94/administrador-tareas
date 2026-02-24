@@ -3,7 +3,7 @@
         <div class="tarea">
             <label>Tarea</label>
             <input [(ngModel)]="textoTarea" type="text" name="textoTarea" maxlength="50" required/>
-            @if(intentoEnviar && textoTarea === ""){
+            @if(intentoEnviar && (textoTarea === "" || textoTarea.length > 50)){
                 <div class="error">
                     El texto de la tarea es obligatorio (Max. 50 caracteres)
                 </div>

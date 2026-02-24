@@ -20,11 +20,11 @@ export class Form {
   crearYEnviarTarea() {
     this.intentoEnviar = true;
 
-    if(this.textoTarea.trim() === "" || this.prioridadTarea === ""){
+    if(this.textoTarea.trim() === "" ||  this.textoTarea.length > 50 || this.prioridadTarea === ""){
       return;
     }
 
-    this.ultimoId += + 1;
+    this.ultimoId++;
 
     let tarea: Tarea = {
       id: this.ultimoId,

@@ -4,9 +4,9 @@
   background: #f5f5f5;
   border-radius: 8px;
   box-shadow: 0 2px 8px var(0, 0, 0, 0.1);
-  overflow-x: auto;
+  overflow-x: auto; /* Cuando el contenido es más ancho que el contenedor, se adapta (moviles)*/
   width: 100%;
-
+  padding: 1rem;
 }
 
 tr {
@@ -51,32 +51,33 @@ table {
     gap: 15px;
 }
 
-.btn-completar {
-    background-color: green;
+.botones button {
+    flex: 1;
+    text-align: center;
+    max-width: 120px;
     color: white;
     border: none;
-    padding: 8px;
+    padding-block: 8px;
+    padding-inline: 15px;
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.btn-completar:hover {
+.btn-completar {
+    background-color: green;
+}
+
+.botones .btn-completar:hover {
     background-color: rgb(112, 214, 112);
     color: rgb(0, 0, 0);
 }
 
 .btn-borrar {
     background-color: red;
-    color: white;
-    border: none;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s;
 }
 
-.btn-borrar:hover {
+.botones .btn-borrar:hover {
     background-color: rgb(239, 106, 106);
     color: rgb(0, 0, 0);
 }

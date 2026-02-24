@@ -1,3 +1,7 @@
 <h1>Administrador de tareas</h1>
-<app-form (enviarTarea)="onTareaRecibida($event)"></app-form>
-<app-list [tareasList]="tareas" (enviarId)="filtrarListaBorrados($event)"></app-list>
+<app-form (enviarTarea)="recibirTarea($event)"></app-form>
+<app-list 
+    [tareasList]="tareas"
+    (enviarIdBorrado)="filtrarListaBorrados($event)"
+    (enviarIdCompletado)="filtarListaCompletados($event)"
+></app-list>
