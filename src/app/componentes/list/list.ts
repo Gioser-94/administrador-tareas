@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Tarea } from '../../interfaces/tarea';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { TareaService } from '../../servicios/TareaService';
+import { Tarea } from '../../interfaces/tarea';
 
 @Component({
   selector: 'app-list',
@@ -11,9 +11,13 @@ import { CommonModule } from '@angular/common';
 })
 export class List {
 
-  @Input() tareasList: Tarea[] = [];
-  @Output() enviarTareaBorrada = new EventEmitter<Tarea>();
-  @Output() enviarTareaCompletada = new EventEmitter<Tarea>();
+  // Injección del servicio de tareas, readonly porque nunca se va a reasignar
+  private readonly tareaService = inject(TareaService);
+
+  // Declaraciones para poder hacer uso de la Signal
+  readonly tareasFiltradas = this.tareaService.tareasFiltradas;
+  readonly tareasPendientes = this.tareaService.tareasPendientes;
+  readonly tareasCompletadas = this.tareaService.tareasCompletadas;
 
   // Propiedad para poder asignar las diferentes clases de los options
   prioridadAClase = {
@@ -22,15 +26,12 @@ export class List {
     Alta: 'prio-alta'
   };
 
-  // Al accionar el boton de completar la tarea, se recibe la tarea,
-  // cambia su estado y emite el id de esa tarea para que app lo reciba
-  completarTarea(tarea: Tarea) {
-    tarea.estado = true;
-    this.enviarTareaCompletada.emit(tarea);
+  completarTarea(tarea: Tarea): void {
+    this.tareaService.completarTarea({...tarea, estaCompletada: true});
   };
 
-  // Se envia el id de la tarea borrada a app
-  borrarTarea(tarea: Tarea){
-    this.enviarTareaBorrada.emit(tarea);
+  borrarTarea(id: number): void {
+    this.tareaService.borrarTarea(id);
   };
+
 }

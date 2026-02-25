@@ -50,6 +50,7 @@
 .boton-añadir button {
     background-color: green;
     color: white;
+    font-weight: bold;
     width: 100px;
     border: none;
     padding-block: 8px;

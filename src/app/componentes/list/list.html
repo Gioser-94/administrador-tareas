@@ -1,4 +1,4 @@
-@if(tareasList.length > 0){
+@if(tareasFiltradas().length > 0){
     <div class="tabla-container">
         <table>
             <thead>
@@ -9,17 +9,21 @@
                 </tr>
             </thead>
             <tbody>
-                @for(tarea of tareasList; track tarea.id){
-                <tr [ngClass]="[prioridadAClase[tarea.prioridad], tarea.estado ? 'completada' : '']">
+                @for(tarea of tareasFiltradas(); track tarea.id){
+                <tr [ngClass]="[prioridadAClase[tarea.prioridad], tarea.estaCompletada ? 'completada' : '']">
                     <td>{{tarea.texto}}</td>
                     <td>{{tarea.prioridad}}</td>
                     <td class="botones">
-                        <button class="btn-completar" (click)="completarTarea(tarea)">Completar</button>
-                        <button class="btn-borrar" (click)="borrarTarea(tarea)">Borrar</button>
+                        <button class="btn-completar" [ngClass]="tarea.estaCompletada ? 'btn-disabled' : '' " (click)="completarTarea(tarea)">Completar</button>
+                        <button class="btn-borrar" (click)="borrarTarea(tarea.id)">Borrar</button>
                     </td>
                 </tr>
                 }
             </tbody>
         </table>
     </div>
+    <p class="mensaje-tareas">Tareas pendientes: {{ tareasPendientes() }}</p>
+    <p class="mensaje-tareas">Tareas completadas: {{ tareasCompletadas() }}</p>
+} @else {
+    <p class="mensaje-tareas">No hay tareas</p>
 }

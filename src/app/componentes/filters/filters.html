@@ -1,0 +1,12 @@
+<div class="contenedor-filtros">
+    <input
+        type="text"
+        (input)="buscar($event)"
+        placeholder="Buscar tarea..."
+    />
+    <select name="" id="" (change)="ordenar($event)">
+        <option value="Sin orden">Sin orden</option>
+        <option value="Prioridad (Asc)">Prioridad (Asc)</option>
+        <option value="Prioridad (Desc)">Prioridad (Desc)</option>
+    </select>
+</div>

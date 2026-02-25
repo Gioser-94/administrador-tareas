@@ -39,7 +39,19 @@ table {
   background-color: #f8d7da;
 }
 
-.completada {
+tr.prio-baja.completada {
+    background-color: #d4edda59;
+}
+
+tr.prio-media.completada {
+    background-color: #fff3cd59;
+}
+
+tr.prio-alta.completada {
+    background-color: #f8d7da59;
+}
+
+tr.completada td:not(:last-child) {
   text-decoration: line-through;
   opacity: 0.6;
 }
@@ -56,6 +68,7 @@ table {
     text-align: center;
     max-width: 120px;
     color: white;
+    font-weight: bold;
     border: none;
     padding-block: 8px;
     padding-inline: 15px;
@@ -80,4 +93,17 @@ table {
 .botones .btn-borrar:hover {
     background-color: rgb(239, 106, 106);
     color: rgb(0, 0, 0);
+}
+
+.btn-disabled {
+    pointer-events: none;
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+/* MENSAJES TAREAS */
+
+.mensaje-tareas {
+    display: flex;
+    justify-content: center;
 }

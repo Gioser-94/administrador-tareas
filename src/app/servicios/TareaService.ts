@@ -12,7 +12,7 @@ export class TareaService {
   // Signal privada que contiene el estado de las tareas (propiedad que solo se puede usar en el servicio)
   // Implemento las convenciones de propiedades privadas (_tareas)
   // Signal inicializada como array vacío ([])
-  private _tareas = signal<Tarea[]>([]);
+  private readonly _tareas = signal<Tarea[]>([]);
 
   // Signal de solo lectura para los componentes, asi nos aseguramos que solo el servicio
   // tiene el control de modificar la signal
@@ -20,10 +20,56 @@ export class TareaService {
   readonly tareas = this._tareas.asReadonly();
 
   // Signal computada: número de tareas pendientes
+  // computed() crea una signal cuyo valor se deriva automáticamente de otra signal
   // Guarda el numero de tareas pendientes segun el estado actual de la Signal
   readonly tareasPendientes = computed(() => 
-    this._tareas().filter(tarea => !tarea.estado).length
+    this._tareas().filter(tarea => !tarea.estaCompletada).length
   );
+
+  readonly tareasCompletadas = computed(() => 
+    this._tareas().filter(tarea => tarea.estaCompletada).length
+  );
+
+  // Signal que guarda el filtro que está activado en ese momento
+  readonly filtroActivo = signal<'Todas' | 'Pendientes' | 'Completadas'>('Todas');
+
+  // Signal que guarda la busqueda
+  private readonly _busqueda = signal<string>('');
+
+  // Signal que guarda el orden
+  private readonly _orden = signal<'Sin orden' | 'Prioridad (Asc)' | 'Prioridad (Desc)'>('Sin orden');
+
+  // Objeto para asignar un numero a cada prioridad
+  private readonly ordenPrioridad = {
+    'Alta': 1,
+    'Media': 2,
+    'Baja': 3
+  }
+
+  // Computed que devuelve las tareas según el filtro
+  readonly tareasFiltradas = computed(() => {
+    const busqueda = this._busqueda().toLowerCase();
+    const orden = this._orden();
+    let tareas = this._tareas();
+
+    if(busqueda) {
+      tareas = tareas.filter(tarea => tarea.texto.toLowerCase().includes(busqueda));
+    }
+
+    switch (orden) {
+      case 'Prioridad (Asc)':
+        tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] -this.ordenPrioridad[b.prioridad]);
+        break;
+      case 'Prioridad (Desc)':
+        tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] -this.ordenPrioridad[a.prioridad]);
+        break;
+      case 'Sin orden':
+        tareas.sort((a, b) => a.id - b.id);
+        break;
+    };
+
+    return tareas;
+  });
 
   constructor() {
     this.cargarDesdeStorage();
@@ -31,7 +77,7 @@ export class TareaService {
 
   // Carga las tareas desde localStorage al iniciar el servicio
   private cargarDesdeStorage(): void {
-    let tareasGuardadas = localStorage.getItem(this.storageKey);
+    const tareasGuardadas = localStorage.getItem(this.storageKey);
 
     if(!tareasGuardadas) {
       localStorage.setItem(this.storageKey, JSON.stringify([]));
@@ -44,7 +90,7 @@ export class TareaService {
 
   // Guardar las tareas en localStorage
   private guardar(): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(this._tareas));
+    localStorage.setItem(this.storageKey, JSON.stringify(this._tareas()));
   }
 
   // Generar un ID único comprobando las tareas existentes
@@ -62,7 +108,7 @@ export class TareaService {
       id: this.generarId(),
       texto,
       prioridad,
-      estado: false
+      estaCompletada: false
     };
     
     // Update de la signal de tareas
@@ -81,10 +127,23 @@ export class TareaService {
 
   // Completar tarea, con .map recorremos el array para devolver uno igual y 
   // solo cambia el estado de un elemento si lo encuentra
-  completarTarea(id: number): void {
+  completarTarea(tareaCompletada: Tarea): void {
+    this._tareas.update(tareas =>
+      tareas.map(tarea => tarea.id === tareaCompletada.id ? tareaCompletada : tarea));
+    /*
     this._tareas.update(tareas => 
-      tareas.map(tarea => tarea.id === id ? {...tarea, estado: true} : tarea)
+      tareas.map(tarea => tarea.id === id ? {...tarea, estaCompletada: true} : tarea)
     );
+    */
     this.guardar();
+  }
+
+  // Cambiar la busqueda
+  cambiarBusqueda(textoBusqueda: string): void {
+    this._busqueda.set(textoBusqueda);
+  };
+
+  cambiarOrden(criterioOrden: 'Sin orden' | 'Prioridad (Asc)' | 'Prioridad (Desc)'): void {
+    this._orden.set(criterioOrden);
   }
 }

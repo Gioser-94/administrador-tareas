@@ -37,7 +37,6 @@ Administrados de tareas
 
 
 - Cosas a mejorar:
-    Implementación de ReactiveFormsModule para la validación del formulario, en caso de que el formulario se vuelva más complejo.
     Asociar cada tarea a un usuario/empleado, para ello se crearia la interfaz usuario/empleado, un nuevo campo en el formulario y cada tarea estaria asignada a un empleado.
     Se podria implementar el tiempo de entrega de tareas, desde que se crea, hasta que se debe de entragar (plazo máximo) y un contador con una cuenta atrás en cada tarea.
     Creación de filtros, ordenación y estadísticas (tiempos de entrega, cantidad de tareas segun su estado...) para las tareas.
