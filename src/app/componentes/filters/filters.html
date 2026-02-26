@@ -1,12 +1,16 @@
 <div class="contenedor-filtros">
-    <input
-        type="text"
-        (input)="buscar($event)"
-        placeholder="Buscar tarea..."
-    />
-    <select name="" id="" (change)="ordenar($event)">
-        <option value="Sin orden">Sin orden</option>
-        <option value="Prioridad (Asc)">Prioridad (Asc)</option>
-        <option value="Prioridad (Desc)">Prioridad (Desc)</option>
-    </select>
+    <div class="filtro-busqueda">
+        <input type="text" (input)="buscar($event)" placeholder="Buscar tarea..." />
+    </div>
+    <div class="filtro-orden">
+        <select name="" id="" (change)="ordenar($event)">
+            <option value="sin-orden">Sin orden</option>
+            <option value="prioridad-asc">Prioridad (Asc)</option>
+            <option value="prioridad-desc">Prioridad (Desc)</option>
+            <option value="fecha-creacion-asc">Fecha de creación (Asc)</option>
+            <option value="fecha-creacion-desc">Fecha de creación (Desc)</option>
+            <option value="fecha-limite-asc">Fecha límite (Asc)</option>
+            <option value="fecha-limite-desc">Fecha límite (Desc)</option>
+        </select>
+    </div>
 </div>

@@ -1,0 +1,8 @@
+<span
+    [ngClass]="[
+            this.tiempoRestante === 'Tiempo vencido' ? 'vencido' : '',
+            this.tiempoRestante === 'Tarea completada' ? 'completada' : ''
+        ]"
+>
+    {{tiempoRestante}}
+</span>

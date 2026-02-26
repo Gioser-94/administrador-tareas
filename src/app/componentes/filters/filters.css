@@ -1,0 +1,8 @@
+.contenedor-filtros {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 1rem;
+  width: 100%;
+}

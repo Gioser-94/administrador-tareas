@@ -14,11 +14,6 @@ export class TareaService {
   // Signal inicializada como array vacío ([])
   private readonly _tareas = signal<Tarea[]>([]);
 
-  // Signal de solo lectura para los componentes, asi nos aseguramos que solo el servicio
-  // tiene el control de modificar la signal
-  // this._tareas.asReadonly() devuelve una signal de solo lectura
-  readonly tareas = this._tareas.asReadonly();
-
   // Signal computada: número de tareas pendientes
   // computed() crea una signal cuyo valor se deriva automáticamente de otra signal
   // Guarda el numero de tareas pendientes segun el estado actual de la Signal
@@ -37,7 +32,7 @@ export class TareaService {
   private readonly _busqueda = signal<string>('');
 
   // Signal que guarda el orden
-  private readonly _orden = signal<'Sin orden' | 'Prioridad (Asc)' | 'Prioridad (Desc)'>('Sin orden');
+  private readonly _orden = signal<'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc'>('sin-orden');
 
   // Objeto para asignar un numero a cada prioridad
   private readonly ordenPrioridad = {
@@ -48,22 +43,34 @@ export class TareaService {
 
   // Computed que devuelve las tareas según el filtro
   readonly tareasFiltradas = computed(() => {
-    const busqueda = this._busqueda().toLowerCase();
+    const busqueda = this._busqueda().toLowerCase().trim();
     const orden = this._orden();
-    let tareas = this._tareas();
+    let tareas = this._tareas(); // necesitamos let porque se reasigna con la búsqueda
 
     if(busqueda) {
       tareas = tareas.filter(tarea => tarea.texto.toLowerCase().includes(busqueda));
     }
 
     switch (orden) {
-      case 'Prioridad (Asc)':
-        tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] -this.ordenPrioridad[b.prioridad]);
+      case 'prioridad-asc':
+        tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] - this.ordenPrioridad[b.prioridad]);
         break;
-      case 'Prioridad (Desc)':
-        tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] -this.ordenPrioridad[a.prioridad]);
+      case 'prioridad-desc':
+        tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] - this.ordenPrioridad[a.prioridad]);
         break;
-      case 'Sin orden':
+      case 'fecha-creacion-asc':
+        tareas.sort((a, b) => a.fechaCreacion - b.fechaCreacion);
+        break;
+      case 'fecha-creacion-desc':
+        tareas.sort((a, b) => b.fechaCreacion - a.fechaCreacion);
+        break;
+      case 'fecha-limite-asc':
+        tareas.sort((a, b) => a.fechaLimite - b.fechaLimite);
+        break;
+      case 'fecha-limite-desc':
+        tareas.sort((a, b) => b.fechaLimite - a.fechaLimite);
+        break; 
+      default:
         tareas.sort((a, b) => a.id - b.id);
         break;
     };
@@ -103,12 +110,14 @@ export class TareaService {
   }
 
   // Agregar una nueva tarea
-  agregarTarea(texto: string, prioridad: 'Baja' | 'Media' | 'Alta'): void {
+  agregarTarea(texto: string, prioridad: 'Baja' | 'Media' | 'Alta', fechaLimite: string): void {
     const nuevaTarea: Tarea = {
       id: this.generarId(),
       texto,
       prioridad,
-      estaCompletada: false
+      estaCompletada: false,
+      fechaCreacion: Date.now(),
+      fechaLimite: new Date(fechaLimite).getTime()
     };
     
     // Update de la signal de tareas
@@ -143,7 +152,7 @@ export class TareaService {
     this._busqueda.set(textoBusqueda);
   };
 
-  cambiarOrden(criterioOrden: 'Sin orden' | 'Prioridad (Asc)' | 'Prioridad (Desc)'): void {
+  cambiarOrden(criterioOrden: 'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc'): void {
     this._orden.set(criterioOrden);
   }
 }

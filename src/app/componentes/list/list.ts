@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TareaService } from '../../servicios/TareaService';
 import { Tarea } from '../../interfaces/tarea';
+import { TiempoRestante } from './tiempoRestante/tiempoRestante';
 
 @Component({
   selector: 'app-list',
-  imports: [CommonModule],
+  imports: [CommonModule, TiempoRestante],
   templateUrl: './list.html',
   styleUrl: './list.css',
 })

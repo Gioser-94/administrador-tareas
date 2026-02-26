@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TareaService } from '../../servicios/TareaService';
+import { fechaValida } from '../validators/fecha-valida.validators';
 
 @Component({
   selector: 'app-form',
@@ -23,7 +24,8 @@ export class Form {
   // Cada vez que el campo cambia se ejecutan los validadores
   tareaForm = this.fb.group({
     texto: ['', [Validators.required, Validators.maxLength(50)]], // FormControl
-    prioridad: ['', Validators.required]
+    prioridad: ['', Validators.required],
+    fechaLimite: ['', [Validators.required, fechaValida]]
   });
 
   // Atajo para acceder a los controles en el html, accede al control de cada campo del
@@ -43,17 +45,19 @@ export class Form {
 
     // tareaForm.value -> { texto: 'Texto de prueba', prioridad: 'Alta' }
     // se desestructura y se guardan los valores en las variables
-    const { texto, prioridad } = this.tareaForm.value;
+    const { texto, prioridad, fechaLimite } = this.tareaForm.value;
 
     this.tareaService.agregarTarea(
       texto!.trim(), // Evitamos con ! que TS crea que pueda ser un valor nulo
-      prioridad as 'Baja' | 'Media' | 'Alta'
+      prioridad as 'Baja' | 'Media' | 'Alta',
+      fechaLimite!
     );
 
     // Resetea todos los valores
     this.tareaForm.reset({
       texto: '',
-      prioridad: ''
+      prioridad: '',
+      fechaLimite: ''
     });
   }
 

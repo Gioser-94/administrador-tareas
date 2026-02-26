@@ -1,1 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;  /* los hijos ocupan todo el ancho */
+  width: 100%;
+  max-width: 1000px;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+}
 
+h1 {
+    text-align: center;
+}

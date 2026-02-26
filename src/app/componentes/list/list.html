@@ -5,6 +5,9 @@
                 <tr>
                     <th>Tarea</th>
                     <th>Prioridad</th>
+                    <th>Fecha creación</th>
+                    <th>Fecha límite</th>
+                    <th>Tiempo restante</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -13,6 +16,9 @@
                 <tr [ngClass]="[prioridadAClase[tarea.prioridad], tarea.estaCompletada ? 'completada' : '']">
                     <td>{{tarea.texto}}</td>
                     <td>{{tarea.prioridad}}</td>
+                    <td>{{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}</td>
+                    <td>{{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}</td>
+                    <td app-tiempo-restante [fechaLimite]="tarea.fechaLimite" [estaCompletada]="tarea.estaCompletada"></td>
                     <td class="botones">
                         <button class="btn-completar" [ngClass]="tarea.estaCompletada ? 'btn-disabled' : '' " (click)="completarTarea(tarea)">Completar</button>
                         <button class="btn-borrar" (click)="borrarTarea(tarea.id)">Borrar</button>

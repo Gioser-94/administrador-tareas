@@ -21,6 +21,8 @@ export class Filters {
   // Metodo para ordenar las tareas
   ordenar(event: Event): void {
     const criterioOrden = (event.target as HTMLSelectElement).value;
-    this.tareaService.cambiarOrden(criterioOrden as 'Sin orden' | 'Prioridad (Asc)' | 'Prioridad (Desc)');
+    this.tareaService.cambiarOrden(
+      criterioOrden as 'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc'
+    );
   };
 }

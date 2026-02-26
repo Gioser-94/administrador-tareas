@@ -1,33 +1,48 @@
 <div class="form-container">
     <form [formGroup]="tareaForm" (ngSubmit)="crearTarea()">
-        <div class="tarea">
-            <label for="textoTarea">Tarea</label>
-            <div class="control">
+        <div class="tarea-container">
+            <label for="textoTarea">Tarea:</label>
+            <div class="control tarea">
                 <input id="textoTarea" formControlName="texto" type="text"/>
-                    <div class="error">
-                        @if(control['texto'].touched && control['texto'].invalid) {
-                            El texto de la tarea es obligatorio
-                        }
-                    </div>
+                <div class="error">
+                    @if(control['texto'].touched && control['texto'].invalid) {
+                        El texto de la tarea es obligatorio
+                    }
+                </div>
             </div>
         </div>
-        <div class="prioridad">
-            <label for="select-prioridad">Prioridad</label>
-            <div class="control">
+        <div class="prioridad-container">
+            <label for="select-prioridad">Prioridad:</label>
+            <div class="control prioridad">
                 <select id="select-prioridad" formControlName="prioridad">
                     <option value="">Seleccionar prioridad</option>
                     <option value="Baja">Baja</option>
                     <option value="Media">Media</option>
                     <option value="Alta">Alta</option>
                 </select>
-                
-                    <div class="error">
-                        @if(control['prioridad'].touched && control['prioridad'].invalid){
-                            La prioridad es obligatoria
-                        }
-                    </div>
+                <div class="error">
+                    @if(control['prioridad'].touched && control['prioridad'].invalid){
+                        La prioridad es obligatoria
+                    }
+                </div>
             </div>
-
+        </div>
+        <div class="fecha-limite-container">
+            <label for="fecha-limite">Fecha límite:</label>
+            <div class="control fecha-limite">
+                <input id="fecha-limite" formControlName="fechaLimite" type="datetime-local"/>
+                <div class="error">
+                    @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['required']) {
+                        La fecha límite es obligatoria
+                    }
+                    @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaInvalida']){
+                        La fecha límite es obligatoria
+                    }
+                    @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaPasada']) {
+                        La fecha debe ser futura
+                    }
+                </div>
+            </div>
         </div>
         <div class="boton-añadir">
             <button type="submit">Añadir</button>
