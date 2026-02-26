@@ -1,3 +1,4 @@
+<!--
 @if(tareasFiltradas().length > 0){
     <div class="tabla-container">
         <table>
@@ -33,3 +34,39 @@
 } @else {
     <p class="mensaje-tareas">No hay tareas</p>
 }
+-->
+<div class="contenedor-columnas">
+    @for(columna of columnas(); track columna.id){
+        <div class="columna">
+            <div class="columna-titulo">
+                <h3>{{columna.titulo}}</h3>
+            </div>
+            <div class="contenedor-tareas">
+                @for(tarea of tareaService.getTareasPorColumna(columna.id)(); track tarea.id){
+                    <div class="tarea">
+                        <div class="tarea-header" [ngClass]="prioridadAClase[tarea.prioridad]">
+                            <div class="tarea-titulo">
+                                {{tarea.texto}}
+                            </div>
+                            <div class="tarea-prioridad">
+                                {{tarea.prioridad}}
+                            </div>
+                        </div>
+                        <div class="tarea-body">
+                            {{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}
+                            {{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}
+                            <!--<div app-tiempo-restante [fechaLimite]="tarea.fechaLimite" [estaCompletada]="tarea.estaCompletada"></div>-->
+                        </div>
+                        <div class="tarea-footer">
+                            <div class="botones">
+                                <button>Editar</button>
+                                <button class="btn-borrar" (click)="borrarTarea(tarea.id)">Eliminar</button>
+                                <button>Mover</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

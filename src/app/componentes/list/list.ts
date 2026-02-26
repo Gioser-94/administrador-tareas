@@ -13,12 +13,15 @@ import { TiempoRestante } from './tiempoRestante/tiempoRestante';
 export class List {
 
   // Injección del servicio de tareas, readonly porque nunca se va a reasignar
-  private readonly tareaService = inject(TareaService);
+  readonly tareaService = inject(TareaService);
 
   // Declaraciones para poder hacer uso de la Signal
   readonly tareasFiltradas = this.tareaService.tareasFiltradas;
+  /*
   readonly tareasPendientes = this.tareaService.tareasPendientes;
   readonly tareasCompletadas = this.tareaService.tareasCompletadas;
+  */
+  readonly columnas = this.tareaService.columnas;
 
   // Propiedad para poder asignar las diferentes clases de los options
   prioridadAClase = {
@@ -27,10 +30,11 @@ export class List {
     Alta: 'prio-alta'
   };
 
+  /*
   completarTarea(tarea: Tarea): void {
     this.tareaService.completarTarea({...tarea, estaCompletada: true});
   };
-
+  */
   borrarTarea(id: number): void {
     this.tareaService.borrarTarea(id);
   };

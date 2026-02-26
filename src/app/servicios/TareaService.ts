@@ -1,5 +1,6 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, Signal, signal } from '@angular/core';
 import { Tarea } from '../interfaces/tarea';
+import { Columna } from '../interfaces/columnas';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,17 @@ export class TareaService {
   // Signal inicializada como array vacío ([])
   private readonly _tareas = signal<Tarea[]>([]);
 
+  readonly columnas = signal<Columna[]>([
+    { id: 'backlog', titulo: "Backlog"},
+    { id: 'to-do', titulo: "To Do"},
+    { id: 'doing', titulo: "Doing"},
+    { id: 'done', titulo: "Done"}
+  ]);
+
   // Signal computada: número de tareas pendientes
   // computed() crea una signal cuyo valor se deriva automáticamente de otra signal
   // Guarda el numero de tareas pendientes segun el estado actual de la Signal
+  /*
   readonly tareasPendientes = computed(() => 
     this._tareas().filter(tarea => !tarea.estaCompletada).length
   );
@@ -24,6 +33,7 @@ export class TareaService {
   readonly tareasCompletadas = computed(() => 
     this._tareas().filter(tarea => tarea.estaCompletada).length
   );
+  */
 
   // Signal que guarda el filtro que está activado en ese momento
   readonly filtroActivo = signal<'Todas' | 'Pendientes' | 'Completadas'>('Todas');
@@ -115,7 +125,7 @@ export class TareaService {
       id: this.generarId(),
       texto,
       prioridad,
-      estaCompletada: false,
+      estado: 'backlog',
       fechaCreacion: Date.now(),
       fechaLimite: new Date(fechaLimite).getTime()
     };
@@ -139,11 +149,6 @@ export class TareaService {
   completarTarea(tareaCompletada: Tarea): void {
     this._tareas.update(tareas =>
       tareas.map(tarea => tarea.id === tareaCompletada.id ? tareaCompletada : tarea));
-    /*
-    this._tareas.update(tareas => 
-      tareas.map(tarea => tarea.id === id ? {...tarea, estaCompletada: true} : tarea)
-    );
-    */
     this.guardar();
   }
 
@@ -154,5 +159,11 @@ export class TareaService {
 
   cambiarOrden(criterioOrden: 'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc'): void {
     this._orden.set(criterioOrden);
+  }
+
+  getTareasPorColumna(columnaId: string): Signal<Tarea[]>{
+    return computed(() => 
+      this._tareas().filter(tarea => tarea.estado === columnaId)
+    );
   }
 }
