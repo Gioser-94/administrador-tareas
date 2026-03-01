@@ -56,7 +56,7 @@ tr.completada td:not(:last-child):not(:nth-child(5)) { /* Excluye el ultimo y el
   opacity: 0.6;
 }
 
-/* BOTONES */
+/* BOTONES 
 .botones {
     display: flex;
     justify-content: center;
@@ -100,7 +100,7 @@ tr.completada td:not(:last-child):not(:nth-child(5)) { /* Excluye el ultimo y el
     background-color: grey;
     cursor: not-allowed;
 }
-
+*/
 /* MENSAJES TAREAS */
 
 .mensaje-tareas {
@@ -146,4 +146,20 @@ tr.completada td:not(:last-child):not(:nth-child(5)) { /* Excluye el ultimo y el
     display: flex;
     justify-content: space-between;
     padding: 10px;
+}
+
+::ng-deep .mat-mdc-mini-fab .mat-icon {
+  color: red;
+}
+
+::ng-deep .mat-mdc-mini-fab {
+    background-color: rgb(234, 172, 172) !important;
+}
+
+::ng-deep .mat-mdc-icon-button .mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+::ng-deep .btn-editar:hover {
+  background-color: rgba(122, 122, 236, 0.697) !important;
 }

@@ -53,13 +53,8 @@ export class TareaService {
 
   // Computed que devuelve las tareas según el filtro
   readonly tareasFiltradas = computed(() => {
-    const busqueda = this._busqueda().toLowerCase().trim();
     const orden = this._orden();
     let tareas = this._tareas(); // necesitamos let porque se reasigna con la búsqueda
-
-    if(busqueda) {
-      tareas = tareas.filter(tarea => tarea.texto.toLowerCase().includes(busqueda));
-    }
 
     switch (orden) {
       case 'prioridad-asc':
@@ -138,6 +133,14 @@ export class TareaService {
     this.guardar();
   }
 
+  // Editar una tarea
+  modificarTarea(tareaEditada: Tarea): void {
+    this._tareas.update(tareas =>
+      tareas.map(t => t.id === tareaEditada.id ? tareaEditada : t)
+    );
+    this.guardar();
+  };
+
   // Borrar tarea
   borrarTarea(id: number): void {
     this._tareas.update(tareas => tareas.filter(tarea => tarea.id !== id));
@@ -162,8 +165,24 @@ export class TareaService {
   }
 
   getTareasPorColumna(columnaId: string): Signal<Tarea[]>{
-    return computed(() => 
-      this._tareas().filter(tarea => tarea.estado === columnaId)
+    return computed(() => {
+      const busqueda = this._busqueda().toLowerCase().trim();
+      let tareas = this._tareas();
+
+      if(busqueda) {
+        tareas = tareas.filter(tarea => tarea.texto.toLowerCase().includes(busqueda));
+      }
+
+      tareas = tareas.filter(tarea => tarea.estado === columnaId);
+
+      return tareas;
+    });
+  };
+
+  cambiarEstado(tarea: Tarea, nuevoEstado: 'backlog' | 'to-do' | 'doing' | 'done'): void {
+    this._tareas.update(tareas => 
+      tareas.map(t => t.id === tarea.id ? {...tarea, estado: nuevoEstado} : t)
     );
+    this.guardar();
   }
 }

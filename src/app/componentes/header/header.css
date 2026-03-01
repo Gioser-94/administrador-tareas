@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+::ng-deep .mat-mdc-outlined-button {
+  border-color: white !important;
+  color: white !important;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+button[mat-stroked-button] {
+  margin-left: 16px;
+}
+
+.buscador {
+  display: flex;
+  align-items: center;
+  width: clamp(150px, 30vw, 400px);
+  gap: 8px;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 6px 12px;
+  color: white;
+}
+
+.buscador input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 14px;
+  width: 100%;
+}
+
+.buscador input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.buscador mat-icon {
+  color: white;
+}

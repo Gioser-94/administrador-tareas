@@ -1,0 +1,12 @@
+<mat-toolbar>
+    <span>MyTasks</span>
+    <button mat-stroked-button (click)="abrirFormulario()">Añadir tarea</button>
+    <span class="spacer"></span>
+    <div class="buscador">
+        <input type="text" (input)="buscar($event)" placeholder="Buscar tarea..." />
+        <mat-icon>search</mat-icon>
+    </div>
+    <span class="spacer"></span>
+    <button mat-stroked-button>Import</button>
+    <button mat-stroked-button>Export</button>
+</mat-toolbar>

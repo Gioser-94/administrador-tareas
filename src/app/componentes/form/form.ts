@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TareaService } from '../../servicios/TareaService';
 import { fechaValida } from '../validators/fecha-valida.validators';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-form',
@@ -9,7 +11,10 @@ import { fechaValida } from '../validators/fecha-valida.validators';
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
-export class Form {
+export class Form implements OnInit{
+
+  private readonly dialogRef = inject(MatDialogRef);
+  readonly data = inject(MAT_DIALOG_DATA);
 
   // Injección del servicio de tareas, readonly porque nunca se va a reasignar
   private readonly tareaService = inject(TareaService);
@@ -59,6 +64,38 @@ export class Form {
       prioridad: '',
       fechaLimite: ''
     });
+
+    this.dialogRef.close();
+  }
+
+  editarTarea() {
+    this.tareaForm.markAllAsTouched();
+
+    if (this.tareaForm.invalid) return;
+
+    const { texto, prioridad, fechaLimite } = this.tareaForm.value;
+
+    this.tareaService.modificarTarea({
+      ...this.data.tarea,
+      texto: texto!.trim(),
+      prioridad: prioridad as 'Baja' | 'Media' | 'Alta',
+      fechaLimite: new Date(fechaLimite!).getTime() 
+    })
+
+    this.dialogRef.close();
+  }
+
+  ngOnInit() {
+    if (this.data.modo === 'editar') {
+      this.tareaForm.patchValue({
+        texto: this.data.tarea.texto,
+        prioridad: this.data.tarea.prioridad,
+        fechaLimite: new Date(this.data.tarea.fechaLimite).toISOString().slice(0, 16)
+        // toISOString convierte los milisegundos a este formato 2024-03-15T14:30:00.000Z
+        // y slice recorta los ultimos caracteres dejando este formato 2024-03-15T14:30
+        // que es el que espera el input datetime-local
+      });
+    }
   }
 
 }
