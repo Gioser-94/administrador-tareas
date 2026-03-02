@@ -36,39 +36,47 @@
 }
 -->
 <div class="contenedor-columnas" cdkDropListGroup>
-    @for(columna of columnas(); track columna.id){
+    @for(columna of columnasFiltradas(); track columna.id){
     <div class="columna">
         <div class="columna-titulo">
             <h3>{{columna.titulo}}</h3>
+            <p>Tareas ({{tareaService.getTareasPorColumna(columna.id)().length}})</p>
         </div>
         <div class="contenedor-tareas" cdkDropList [id]="columna.id"
             [cdkDropListData]="tareaService.getTareasPorColumna(columna.id)()" (cdkDropListDropped)="drop($event)">
             @for(tarea of tareaService.getTareasPorColumna(columna.id)(); track tarea.id){
-            <div class="tarea" cdkDrag>
-                <div class="tarea-header" [ngClass]="prioridadAClase[tarea.prioridad]">
-                    <div class="tarea-titulo">
-                        {{tarea.texto}}
+                <div class="tarea" cdkDrag>
+                    <div class="tarea-header" [ngClass]="prioridadAClase[tarea.prioridad]">
+                        <div class="tarea-titulo">
+                            {{tarea.texto}}
+                        </div>
+                        <div class="tarea-prioridad">
+                            {{tarea.prioridad}}
+                        </div>
                     </div>
-                    <div class="tarea-prioridad">
-                        {{tarea.prioridad}}
+                    <div class="tarea-body">
+                        <div class="tarea-fecha-creacion">
+                            Creación: {{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}
+                        </div>
+                        <div class="tarea-fecha-limite">
+                            Límite: {{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}
+                        </div>
+                        <div class="tarea-tiempo-restante">
+                            Restante:
+                            <span app-tiempo-restante [fechaLimite]="tarea.fechaLimite"></span>
+                        </div>
+                    </div>
+                    <div class="tarea-footer">
+                        <div class="botones">
+                            <button mat-icon-button class="btn-editar" (click)="abrirFormularioEditar(tarea)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-mini-fab color="warn" (click)="borrarTarea(tarea.id)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="tarea-body">
-                    {{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}
-                    {{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}
-                    <!--<div app-tiempo-restante [fechaLimite]="tarea.fechaLimite" [estaCompletada]="tarea.estaCompletada"></div>-->
-                </div>
-                <div class="tarea-footer">
-                    <div class="botones">
-                        <button mat-icon-button class="btn-editar" (click)="abrirFormularioEditar(tarea)">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-mini-fab color="warn" (click)="borrarTarea(tarea.id)">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </div>
-                </div>
-            </div>
             }
         </div>
     </div>

@@ -33,4 +33,8 @@ export class Header {
       height: 'auto'
     });
   };
+
+  exportar(): void {
+    this.tareaService.exportarTareas();
+  }
 }

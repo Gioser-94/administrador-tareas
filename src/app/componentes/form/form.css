@@ -1,6 +1,7 @@
 .form-container {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   width: fit-content;
   margin: auto;  /* centrado horizontal, espacio abajo */
   padding: 1.5rem;
@@ -9,9 +10,15 @@
 .form-edit-container {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   width: fit-content;
   margin: auto;  /* centrado horizontal, espacio abajo */
   padding: 1.5rem;
+}
+
+.form-titulo-container {
+    display: flex;
+    justify-content: center;
 }
 
 .tarea-container,
@@ -48,13 +55,19 @@
   margin-left: 0;
 }
 
-.boton-añadir {
+.boton-container {
     display: flex;
     justify-content: center;
 }
 
-.boton-añadir button,
-.boton-editar button {
+.botones-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn-añadir,
+.btn-editar,
+.btn-cancelar {
     background-color: green;
     color: white;
     font-weight: bold;
@@ -63,13 +76,22 @@
     padding-block: 8px;
     padding-inline: 15px;
     margin-block: 5px;
-    border-radius: 6px;
+    border-radius: 6px !important;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.boton-añadir button:hover,
-.boton-editar button:hover {
-    background-color: rgb(112, 214, 112);
+.btn-añadir:hover,
+.btn-editar:hover {
+    background-color: rgb(112, 214, 112) !important;
+    color: rgb(0, 0, 0);
+}
+
+.btn-cancelar {
+    background-color: red;
+}
+
+.btn-cancelar:hover {
+    background-color: rgb(239, 106, 106);
     color: rgb(0, 0, 0);
 }

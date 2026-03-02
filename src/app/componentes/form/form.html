@@ -1,5 +1,8 @@
 @if(data.modo === 'crear') {
     <div class="form-container">
+        <div class="form-titulo-container">
+            <h3>Añadir tarea</h3>
+        </div>
         <form [formGroup]="tareaForm" (ngSubmit)="crearTarea()">
             <div class="tarea-container">
                 <label for="textoTarea">Tarea:</label>
@@ -45,8 +48,8 @@
                     </div>
                 </div>
             </div>
-            <div class="boton-añadir">
-                <button type="submit">Añadir</button>
+            <div class="boton-container">
+                <button type="submit" class="btn-añadir">Añadir</button>
             </div>
         </form>
     </div>
@@ -54,6 +57,9 @@
 
 @if(data.modo === 'editar') {
 <div class="form-edit-container">
+    <div class="form-titulo-container">
+        <h3>Editar tarea</h3>
+    </div>
     <form [formGroup]="tareaForm" (ngSubmit)="editarTarea()">
         <div class="tarea-container">
             <label for="textoTarea">Tarea:</label>
@@ -99,8 +105,9 @@
                     </div>
                 </div>
             </div>
-        <div class="boton-editar">
-                <button type="submit">Editar</button>
+        <div class="botones-container">
+                <button type="submit" class="btn-editar">Editar</button>
+                <button type="button" class="btn-cancelar" (click)="cancelarEditarTarea()">Cancelar</button>
         </div>
     </form>
 </div>

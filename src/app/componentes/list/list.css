@@ -127,6 +127,16 @@ tr.completada td:not(:last-child):not(:nth-child(5)) { /* Excluye el ultimo y el
   flex-direction: column;
 }
 
+.columna-titulo {
+    display: flex;
+    justify-content: space-between;
+}
+
+.columna-titulo h3,
+.columna-titulo p {
+    margin-block: 16px;
+}
+
 .contenedor-tareas {
   display: flex;
   flex-direction: column;
@@ -153,13 +163,22 @@ tr.completada td:not(:last-child):not(:nth-child(5)) { /* Excluye el ultimo y el
 }
 
 ::ng-deep .mat-mdc-mini-fab {
-    background-color: rgb(234, 172, 172) !important;
+    background-color: white !important;
+    box-shadow: none !important;
+}
+
+::ng-deep .mat-mdc-mini-fab:hover {
+    background-color: rgba(255, 0, 0, 0.19) !important;
 }
 
 ::ng-deep .mat-mdc-icon-button .mat-icon {
   color: var(--mat-sys-primary);
 }
 
+::ng-deep .btn-editar {
+    border-radius: 12px !important;
+}
+
 ::ng-deep .btn-editar:hover {
-  background-color: rgba(122, 122, 236, 0.697) !important;
+  background-color: #005dbb49 !important;
 }

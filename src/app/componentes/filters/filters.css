@@ -6,3 +6,21 @@
   margin-bottom: 1rem;
   width: 100%;
 }
+.filtro-orden {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-filtros {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+::ng-deep .mdc-evolution-chip-set__chips {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.filtro-titulo {
+  margin-top: 8px;
+}

@@ -2,8 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TareaService } from '../../servicios/TareaService';
 import { fechaValida } from '../validators/fecha-valida.validators';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-form',
@@ -82,6 +81,10 @@ export class Form implements OnInit{
       fechaLimite: new Date(fechaLimite!).getTime() 
     })
 
+    this.dialogRef.close();
+  }
+
+  cancelarEditarTarea() {
     this.dialogRef.close();
   }
 

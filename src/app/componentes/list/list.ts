@@ -23,13 +23,11 @@ export class List {
   readonly tareaService = inject(TareaService);
   private readonly dialog = inject(MatDialog);
 
-  // Declaraciones para poder hacer uso de la Signal
-  readonly tareasFiltradas = this.tareaService.tareasFiltradas;
   /*
   readonly tareasPendientes = this.tareaService.tareasPendientes;
   readonly tareasCompletadas = this.tareaService.tareasCompletadas;
   */
-  readonly columnas = this.tareaService.columnas;
+  readonly columnasFiltradas = this.tareaService.columnasFiltradas;
 
   // Propiedad para poder asignar las diferentes clases de los options
   prioridadAClase = {
