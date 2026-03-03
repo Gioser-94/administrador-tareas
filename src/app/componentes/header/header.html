@@ -7,6 +7,11 @@
         <mat-icon>search</mat-icon>
     </div>
     <span class="spacer"></span>
-    <button mat-stroked-button>Import</button>
+    <!-- 
+    #fileInput es una variable referencial de template de Angular
+    Nos sirve para ligar el boton con el input
+    -->
+    <input  #fileInput type="file" multiple accept=".json" hidden (change)="importar($event)">
+    <button mat-stroked-button (click)="fileInput.click()">Import</button>
     <button mat-stroked-button (click)="exportar()">Export</button>
 </mat-toolbar>

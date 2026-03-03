@@ -69,6 +69,12 @@ export class TareaService {
     'Baja': 3
   }
 
+  // Signal para tareas seleccionadas, solo guardamos el id
+  private readonly _tareasSeleccionadas = signal<number[]>([]);
+
+  // Signal para la lectura de las tareas seleccionas
+  readonly tareasSeleccionadas = this._tareasSeleccionadas.asReadonly();
+
   constructor() {
     this.cargarDesdeStorage();
   }
@@ -209,14 +215,87 @@ export class TareaService {
     this.guardar();
   }
 
+  // EXPORTAR E IMPORTAR
+
   exportarTareas(): void {
-    const json = JSON.stringify(this._tareas(), null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
+    const json = JSON.stringify(this._tareas(), null, 2); // null para que no filtre ni convierta las propiedades
+    const blob = new Blob([json], { type: 'application/json' }); // Objeto que representa datos en crudo, solo en memoria del navegador
+    const url = URL.createObjectURL(blob); // Dirección temporal en memoria que apunta al Blob
     const a = this.document.createElement('a');
-    a.href = url;
-    a.download = 'tareas.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    a.href = url; // Enlace invisible que apunta a la URL del blob
+    a.download = 'tareas.json'; // En vez de navegar, el enlace descarga
+    a.click(); // Simula un click en el enlace invisible, dispara la descarga
+    URL.revokeObjectURL(url); // Borramos la ruta temporal
+  };
+
+  async importarTareas(event: Event): Promise<void> {
+    // Casteamos el target a HTMLInputElement para acceder a .files
+    // Si no, devolveria un tipo genérico y no podriamos acceder a 
+    // la propiedad files
+    const input = event.target as HTMLInputElement;
+
+    // Si no hay archivos salimos
+    if (!input.files?.length) return;
+
+    // Como tenemos una lista de archivo, no acepta .map, por eso lo convertimos a Array normal
+    for (const archivo of Array.from(input.files)) {
+      
+      // Le indicamos a JS que espere hasta que la promesa se resuelva y "texto" tenga el valor leido
+      // .text() lee los bytes del archivo y decodifica como texto UTF-8
+      // cuando termina de leer, devuelve la promesa resuelta con el contenido
+      // await se encarga de extraer el contenido de la promesa
+      const texto = await archivo.text(); // la promesa que devuelve .text() es independiente a la general del metodo
+      const tareasImportadas = JSON.parse(texto) as Tarea[];
+
+      this._tareas.update(tareas => {
+        // Cogemos el ID más alto actual
+        const maxId = tareas.length > 0 ? Math.max(...tareas.map(t => t.id)): 0;
+
+        // Reasignamos IDs a las tareas importadas partiendo desde el máximo
+        const tareasConNuevoId = tareasImportadas.map((tarea, index) => ({
+          ...tarea,
+          id: maxId + index + 1
+        }));
+        return [...tareas, ...tareasConNuevoId];
+      });
+      this.guardar();
+    }
+  }
+
+  // SELECCIÓN DE TAREAS
+
+  // Comprueba si esta o no seleccionada, añade o quita en función de la comprobación
+  alternarGuardadoSeleccionadas(id: number): void {
+    this._tareasSeleccionadas.update(seleccionadas =>
+      seleccionadas.includes(id)
+        ? seleccionadas.filter(s => s !== id) // si ya estaba, la quita
+        : [...seleccionadas, id] // si no estaba, la añade
+    );
+  }
+
+  // Sacamos todos los ids de la signal principal
+  seleccionarTodas(): void {
+    const todosLosIds = this._tareas().map(tarea => tarea.id);
+    this._tareasSeleccionadas.set(todosLosIds);
+  }
+
+
+  borrarSeleccionadas(): void {
+    const seleccionadas = this._tareasSeleccionadas();
+    this._tareas.update(tareas =>
+      tareas.filter(tarea => !seleccionadas.includes(tarea.id))); // Cogemos solo los que no estan seleccionados
+
+    this.limpiarSeleccion();
+    this.guardar();
+  }
+
+
+  limpiarSeleccion(): void {
+    this._tareasSeleccionadas.set([]);
+  }
+
+  // Signal que reacciona cuando cambiamos la signal de seleccionadas
+  estaSeleccionada(id: number): Signal<boolean> {
+    return computed(() => this._tareasSeleccionadas().includes(id));
   }
 }

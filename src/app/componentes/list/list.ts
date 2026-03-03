@@ -8,12 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material/dialog';
 import { Form } from '../form/form';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, TiempoRestante, MatButtonModule, MatIconModule, DragDropModule],
+  imports: [CommonModule, TiempoRestante, MatButtonModule, MatIconModule, DragDropModule, MatCheckboxModule],
   templateUrl: './list.html',
   styleUrl: './list.css',
 })

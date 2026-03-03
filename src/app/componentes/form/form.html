@@ -40,7 +40,7 @@
                             La fecha límite es obligatoria
                         }
                         @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaInvalida']){
-                            La fecha límite es obligatoria
+                            La fecha límite es inválida
                         }
                         @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaPasada']) {
                             La fecha debe ser futura
@@ -97,7 +97,7 @@
                             La fecha límite es obligatoria
                         }
                         @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaInvalida']){
-                            La fecha límite es obligatoria
+                            La fecha límite es inválida
                         }
                         @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaPasada']) {
                             La fecha debe ser futura

@@ -14,7 +14,9 @@ export type Filtro = 'Alta' | 'Media' | 'Baja' | 'backlog' | 'to-do' | 'doing' |
 })
 export class Filters { 
 
-  private readonly tareaService = inject(TareaService);
+  readonly tareaService = inject(TareaService);
+
+  readonly tareasSeleccionas = this.tareaService.tareasSeleccionadas;
 
   // Metodo para ordenar las tareas
   ordenar(event: Event): void {

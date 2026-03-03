@@ -74,6 +74,8 @@
                             <button mat-mini-fab color="warn" (click)="borrarTarea(tarea.id)">
                                 <mat-icon>delete</mat-icon>
                             </button>
+                            <mat-checkbox class="btn-checkbox" [checked]="tareaService.estaSeleccionada(tarea.id)()" (change)="tareaService.alternarGuardadoSeleccionadas(tarea.id)">
+                            </mat-checkbox>
                         </div>
                     </div>
                 </div>

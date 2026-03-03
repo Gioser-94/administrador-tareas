@@ -37,4 +37,8 @@ export class Header {
   exportar(): void {
     this.tareaService.exportarTareas();
   }
+
+  importar(event: Event): void {
+    this.tareaService.importarTareas(event);
+  }
 }

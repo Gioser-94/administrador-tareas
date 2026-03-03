@@ -1,4 +1,5 @@
 <div class="contenedor-filtros">
+
     <div class="filtro-orden">
         <label for="orden-tareas">Orden de tareas:</label>
         <select name="" id="orden-tareas" (change)="ordenar($event)">
@@ -11,23 +12,35 @@
             <option value="fecha-limite-desc">Fecha límite (Desc)</option>
         </select>
     </div>
-    <button mat-raised-button class="btn-filtros" [matMenuTriggerFor]="menu">
-      <mat-icon>tune</mat-icon>
-      Filtros
-    </button>
-    <mat-menu #menu="matMenu">
-      <div (click)="$event.stopPropagation()" class="contenido-menu" style="padding: 8px 16px">
-        <mat-chip-listbox multiple (change)="filtrosSeleccionados($event)" selectable>
-            <span class="filtro-titulo">Prioridad</span>
-            <mat-chip-option value="Alta">Prioridad alta</mat-chip-option>
-            <mat-chip-option value="Media">Prioridad media</mat-chip-option>
-            <mat-chip-option value="Baja">Prioridad baja</mat-chip-option>
-            <span class="filtro-titulo">Estado</span>
-            <mat-chip-option value="backlog">Backlog</mat-chip-option>
-            <mat-chip-option value="to-do">To Do</mat-chip-option>
-            <mat-chip-option value="doing">Doing</mat-chip-option>
-            <mat-chip-option value="done">Done</mat-chip-option>
-        </mat-chip-listbox>
-      </div>
-    </mat-menu>
+
+    <div class="filtros-generales">
+      <button mat-raised-button class="btn-filtros" [matMenuTriggerFor]="menu">
+        <mat-icon>tune</mat-icon>
+        Filtros
+      </button>
+      <mat-menu #menu="matMenu">
+        <div (click)="$event.stopPropagation()" class="contenido-menu" style="padding: 8px 16px">
+          <mat-chip-listbox multiple (change)="filtrosSeleccionados($event)" selectable>
+              <span class="filtro-titulo">Prioridad</span>
+              <mat-chip-option value="Alta">Prioridad alta</mat-chip-option>
+              <mat-chip-option value="Media">Prioridad media</mat-chip-option>
+              <mat-chip-option value="Baja">Prioridad baja</mat-chip-option>
+              <span class="filtro-titulo">Estado</span>
+              <mat-chip-option value="backlog">Backlog</mat-chip-option>
+              <mat-chip-option value="to-do">To Do</mat-chip-option>
+              <mat-chip-option value="doing">Doing</mat-chip-option>
+              <mat-chip-option value="done">Done</mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </mat-menu>
+    </div>
+    
+    <div class="filtros-seleccion">
+      @if (tareasSeleccionas().length > 0) {
+        <button mat-raised-button (click)="tareaService.seleccionarTodas()" class="btn-filtros">Seleccionar todas</button>
+        <button mat-raised-button (click)="tareaService.limpiarSeleccion()" class="btn-filtros">Limpiar seleccionadas</button>
+        <button mat-raised-button (click)="tareaService.borrarSeleccionadas()" class="btn-filtros">Borrar seleccionadas</button>
+      }
+    </div>
+    
 </div>
