@@ -65,8 +65,7 @@
     justify-content: space-around;
 }
 
-.btn-añadir,
-.btn-editar,
+.btn-submit,
 .btn-cancelar {
     background-color: green;
     color: white;
@@ -81,8 +80,7 @@
     transition: background-color 0.3s;
 }
 
-.btn-añadir:hover,
-.btn-editar:hover {
+.btn-submit:hover {
     background-color: rgb(112, 214, 112) !important;
     color: rgb(0, 0, 0);
 }

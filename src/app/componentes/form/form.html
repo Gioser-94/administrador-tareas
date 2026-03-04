@@ -1,70 +1,12 @@
-@if(data.modo === 'crear') {
-    <div class="form-container">
-        <div class="form-titulo-container">
-            <h3>Añadir tarea</h3>
-        </div>
-        <form [formGroup]="tareaForm" (ngSubmit)="crearTarea()">
-            <div class="tarea-container">
-                <label for="textoTarea">Tarea:</label>
-                <div class="control tarea">
-                    <input id="textoTarea" formControlName="texto" type="text"/>
-                    <div class="error">
-                        @if(control['texto'].touched && control['texto'].invalid) {
-                            El texto de la tarea es obligatorio
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="prioridad-container">
-                <label for="select-prioridad">Prioridad:</label>
-                <div class="control prioridad">
-                    <select id="select-prioridad" formControlName="prioridad">
-                        <option value="">Seleccionar prioridad</option>
-                        <option value="Baja">Baja</option>
-                        <option value="Media">Media</option>
-                        <option value="Alta">Alta</option>
-                    </select>
-                    <div class="error">
-                        @if(control['prioridad'].touched && control['prioridad'].invalid){
-                            La prioridad es obligatoria
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="fecha-limite-container">
-                <label for="fecha-limite">Fecha límite:</label>
-                <div class="control fecha-limite">
-                    <input id="fecha-limite" formControlName="fechaLimite" type="datetime-local"/>
-                    <div class="error">
-                        @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['required']) {
-                            La fecha límite es obligatoria
-                        }
-                        @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaInvalida']){
-                            La fecha límite es inválida
-                        }
-                        @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaPasada']) {
-                            La fecha debe ser futura
-                        }
-                    </div>
-                </div>
-            </div>
-            <div class="boton-container">
-                <button type="submit" class="btn-añadir">Añadir</button>
-            </div>
-        </form>
-    </div>
-}
-
-@if(data.modo === 'editar') {
-<div class="form-edit-container">
+<div class="form-container">
     <div class="form-titulo-container">
-        <h3>Editar tarea</h3>
+        <h3>{{ data.modo === 'crear' ? 'Añadir tarea' : 'Editar tarea'}}</h3>
     </div>
-    <form [formGroup]="tareaForm" (ngSubmit)="editarTarea()">
+    <form [formGroup]="tareaForm" (ngSubmit)="data.modo === 'crear' ? crearTarea() : editarTarea()">
         <div class="tarea-container">
             <label for="textoTarea">Tarea:</label>
             <div class="control tarea">
-                <input id="textoTarea-editar" formControlName="texto" type="text"/>
+                <input id="textoTarea" formControlName="texto" type="text" />
                 <div class="error">
                     @if(control['texto'].touched && control['texto'].invalid) {
                         El texto de la tarea es obligatorio
@@ -75,7 +17,7 @@
         <div class="prioridad-container">
             <label for="select-prioridad">Prioridad:</label>
             <div class="control prioridad">
-                <select id="select-prioridad-editar" formControlName="prioridad">
+                <select id="select-prioridad" formControlName="prioridad">
                     <option value="">Seleccionar prioridad</option>
                     <option value="Baja">Baja</option>
                     <option value="Media">Media</option>
@@ -89,26 +31,27 @@
             </div>
         </div>
         <div class="fecha-limite-container">
-                <label for="fecha-limite">Fecha límite:</label>
-                <div class="control fecha-limite">
-                    <input id="fecha-limite-editar" formControlName="fechaLimite" type="datetime-local"/>
-                    <div class="error">
-                        @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['required']) {
-                            La fecha límite es obligatoria
-                        }
-                        @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaInvalida']){
-                            La fecha límite es inválida
-                        }
-                        @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaPasada']) {
-                            La fecha debe ser futura
-                        }
-                    </div>
+            <label for="fecha-limite">Fecha límite:</label>
+            <div class="control fecha-limite">
+                <input id="fecha-limite" formControlName="fechaLimite" type="datetime-local" />
+                <div class="error">
+                    @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['required']) {
+                        La fecha límite es obligatoria
+                    }
+                    @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaInvalida']){
+                        La fecha límite es inválida
+                    }
+                    @if(control['fechaLimite'].touched && control['fechaLimite'].errors?.['fechaPasada']) {
+                        La fecha debe ser futura
+                    }
                 </div>
             </div>
-        <div class="botones-container">
-                <button type="submit" class="btn-editar">Editar</button>
+        </div>
+        <div [ngClass]="data.modo === 'crear' ? 'boton-container' : 'botones-container'">
+            <button type="submit" class="btn-submit">{{data.modo === 'crear' ? 'Añadir' : 'Editar'}}</button>
+            @if (data.modo === 'editar'){
                 <button type="button" class="btn-cancelar" (click)="cancelarEditarTarea()">Cancelar</button>
+            }
         </div>
     </form>
 </div>
-}

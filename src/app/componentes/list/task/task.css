@@ -1,0 +1,70 @@
+.tarea {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 0 rgba(9,30,66,.25);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.tarea-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+/* PRIORIDADES */
+
+.prio-baja {
+  background-color: #d4edda;
+}
+
+.prio-media {
+  background-color: #fff3cd;
+}
+
+.prio-alta {
+  background-color: #f8d7da;
+}
+
+/* BOTONES */
+
+.botones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+::ng-deep .mat-mdc-mini-fab .mat-icon {
+  color: red;
+}
+
+::ng-deep .mat-mdc-mini-fab {
+    background-color: white !important;
+    box-shadow: none !important;
+}
+
+::ng-deep .mat-mdc-mini-fab:hover {
+    background-color: rgba(255, 0, 0, 0.19) !important;
+}
+
+::ng-deep .mat-mdc-icon-button .mat-icon {
+  color: var(--mat-sys-primary);
+}
+
+::ng-deep .btn-editar {
+    border-radius: 12px !important;
+}
+
+::ng-deep .btn-editar:hover {
+  background-color: #005dbb49 !important;
+}
+
+::ng-deep .mdc-checkbox__ripple {
+    border-radius: 12px !important;
+    background-color: grey !important;
+}
+
+:host ::ng-deep mat-checkbox.btn-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+    background-color: var(--mat-sys-primary) !important;
+    border-color: var(--mat-sys-primary) !important;
+}

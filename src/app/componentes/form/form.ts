@@ -1,12 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule} from '@angular/forms';
 import { TareaService } from '../../servicios/TareaService';
 import { fechaValida } from '../validators/fecha-valida.validators';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })

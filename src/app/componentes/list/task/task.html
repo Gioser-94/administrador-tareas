@@ -1,0 +1,36 @@
+<div class="tarea" cdkDrag>
+    <div class="tarea-header" [ngClass]="prioridadAClase[tarea.prioridad]">
+        <div class="tarea-titulo">
+            {{tarea.texto}}
+        </div>
+        <div class="tarea-prioridad">
+            {{tarea.prioridad}}
+        </div>
+    </div>
+    <div class="tarea-body">
+        <div class="tarea-fecha-creacion">
+            Creación: {{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}
+        </div>
+        <div class="tarea-fecha-limite">
+            Límite: {{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}
+        </div>
+        <div class="tarea-tiempo-restante">
+            Restante:
+            <span app-tiempo-restante [fechaLimite]="tarea.fechaLimite"></span>
+        </div>
+    </div>
+    <div class="tarea-footer">
+        <div class="botones">
+            <button mat-icon-button class="btn-editar" (click)="abrirFormularioEditar(tarea)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-mini-fab color="warn" (click)="borrarTarea(tarea.id)">
+                <mat-icon>delete</mat-icon>
+            </button>
+            <mat-checkbox class="btn-checkbox" [disableRipple]="true"
+                [checked]="tareaService.estaSeleccionada(tarea.id)()"
+                (change)="tareaService.alternarGuardadoSeleccionadas(tarea.id)">
+            </mat-checkbox>
+        </div>
+    </div>
+</div>

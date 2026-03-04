@@ -1,40 +1,3 @@
-<!--
-@if(tareasFiltradas().length > 0){
-    <div class="tabla-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Tarea</th>
-                    <th>Prioridad</th>
-                    <th>Fecha creación</th>
-                    <th>Fecha límite</th>
-                    <th>Tiempo restante</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for(tarea of tareasFiltradas(); track tarea.id){
-                <tr [ngClass]="[prioridadAClase[tarea.prioridad], tarea.estaCompletada ? 'completada' : '']">
-                    <td>{{tarea.texto}}</td>
-                    <td>{{tarea.prioridad}}</td>
-                    <td>{{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}</td>
-                    <td>{{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}</td>
-                    <td app-tiempo-restante [fechaLimite]="tarea.fechaLimite" [estaCompletada]="tarea.estaCompletada"></td>
-                    <td class="botones">
-                        <button class="btn-completar" [ngClass]="tarea.estaCompletada ? 'btn-disabled' : '' " (click)="completarTarea(tarea)">Completar</button>
-                        <button class="btn-borrar" (click)="borrarTarea(tarea.id)">Borrar</button>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-    <p class="mensaje-tareas">Tareas pendientes: {{ tareasPendientes() }}</p>
-    <p class="mensaje-tareas">Tareas completadas: {{ tareasCompletadas() }}</p>
-} @else {
-    <p class="mensaje-tareas">No hay tareas</p>
-}
--->
 <div class="contenedor-columnas" cdkDropListGroup>
     @for(columna of columnasFiltradas(); track columna.id){
     <div class="columna">
@@ -45,40 +8,7 @@
         <div class="contenedor-tareas" cdkDropList [id]="columna.id"
             [cdkDropListData]="tareaService.getTareasPorColumna(columna.id)()" (cdkDropListDropped)="drop($event)">
             @for(tarea of tareaService.getTareasPorColumna(columna.id)(); track tarea.id){
-                <div class="tarea" cdkDrag>
-                    <div class="tarea-header" [ngClass]="prioridadAClase[tarea.prioridad]">
-                        <div class="tarea-titulo">
-                            {{tarea.texto}}
-                        </div>
-                        <div class="tarea-prioridad">
-                            {{tarea.prioridad}}
-                        </div>
-                    </div>
-                    <div class="tarea-body">
-                        <div class="tarea-fecha-creacion">
-                            Creación: {{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}
-                        </div>
-                        <div class="tarea-fecha-limite">
-                            Límite: {{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}
-                        </div>
-                        <div class="tarea-tiempo-restante">
-                            Restante:
-                            <span app-tiempo-restante [fechaLimite]="tarea.fechaLimite"></span>
-                        </div>
-                    </div>
-                    <div class="tarea-footer">
-                        <div class="botones">
-                            <button mat-icon-button class="btn-editar" (click)="abrirFormularioEditar(tarea)">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            <button mat-mini-fab color="warn" (click)="borrarTarea(tarea.id)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                            <mat-checkbox class="btn-checkbox" [checked]="tareaService.estaSeleccionada(tarea.id)()" (change)="tareaService.alternarGuardadoSeleccionadas(tarea.id)">
-                            </mat-checkbox>
-                        </div>
-                    </div>
-                </div>
+                <app-task [tarea]="tarea"></app-task>
             }
         </div>
     </div>
