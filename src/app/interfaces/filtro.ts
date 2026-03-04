@@ -1,0 +1,1 @@
+export type Filtro = 'Alta' | 'Media' | 'Baja' | 'backlog' | 'to-do' | 'doing' | 'done';

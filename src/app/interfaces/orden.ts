@@ -1,0 +1,1 @@
+export type Orden = 'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc';

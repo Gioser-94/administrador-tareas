@@ -2,14 +2,18 @@ import { computed, Injectable, inject, Signal, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Tarea } from '../interfaces/tarea';
 import { Columna } from '../interfaces/columnas';
-import { Filtro } from '../componentes/filters/filters';
+import { Filtro } from '../interfaces/filtro';
+import { Orden } from '../interfaces/orden';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TareaService {
 
-  private document = inject(DOCUMENT);
+  // ------- SIGNALS PRIVADAS -------
+
+  // Para poder crear elementos en Exportar
+  private readonly document = inject(DOCUMENT);
 
   // readonly evita reasignar la propiedad, porque nunca debe de cambiar
   private readonly storageKey = 'tareas';
@@ -19,39 +23,12 @@ export class TareaService {
   // Signal inicializada como array vacío ([])
   private readonly _tareas = signal<Tarea[]>([]);
 
-  readonly columnas = signal<Columna[]>([
-    { id: 'backlog', titulo: "Backlog"},
-    { id: 'to-do', titulo: "To Do"},
-    { id: 'doing', titulo: "Doing"},
-    { id: 'done', titulo: "Done"}
+  private readonly _columnas = signal<Columna[]>([
+    { id: 'backlog', titulo: "Backlog" },
+    { id: 'to-do', titulo: "To Do" },
+    { id: 'doing', titulo: "Doing" },
+    { id: 'done', titulo: "Done" }
   ]);
-  
-  columnasFiltradas = computed(() => {
-    const filtros = this._filtroActivo();
-
-    if(!filtros.length) return this.columnas();
-
-    const filtrosColumnas = new Set(['backlog', 'to-do', 'doing', 'done']);
-    const columnasSeleccionadas = filtros.filter(f => filtrosColumnas.has(f));
-
-    if (columnasSeleccionadas.length === 0) return this.columnas();
-
-    return this.columnas().filter(columna => 
-      filtros.includes(columna.id as Filtro)
-    );
-  });
-  // Signal computada: número de tareas pendientes
-  // computed() crea una signal cuyo valor se deriva automáticamente de otra signal
-  // Guarda el numero de tareas pendientes segun el estado actual de la Signal
-  /*
-  readonly tareasPendientes = computed(() => 
-    this._tareas().filter(tarea => !tarea.estaCompletada).length
-  );
-
-  readonly tareasCompletadas = computed(() => 
-    this._tareas().filter(tarea => tarea.estaCompletada).length
-  );
-  */
 
   // Signal que guarda el filtro que está activado en ese momento
   private readonly _filtroActivo = signal<Filtro[]>([]);
@@ -60,7 +37,7 @@ export class TareaService {
   private readonly _busqueda = signal<string>('');
 
   // Signal que guarda el orden
-  private readonly _orden = signal<'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc'>('sin-orden');
+  private readonly _orden = signal<Orden>('sin-orden');
 
   // Objeto para asignar un numero a cada prioridad
   private readonly ordenPrioridad = {
@@ -72,18 +49,104 @@ export class TareaService {
   // Signal para tareas seleccionadas, solo guardamos el id
   private readonly _tareasSeleccionadas = signal<number[]>([]);
 
+
+
+  // ------------ SIGNALS PÚBLICAS ------------
+
   // Signal para la lectura de las tareas seleccionas
   readonly tareasSeleccionadas = this._tareasSeleccionadas.asReadonly();
+
+
+  // ------------ COMPUTED -----------------
+
+  columnasFiltradas = computed(() => {
+    const filtros = this._filtroActivo();
+
+    if (!filtros.length) return this._columnas();
+
+    const filtrosColumnas = new Set(['backlog', 'to-do', 'doing', 'done']);
+    const columnasSeleccionadas = filtros.filter(f => filtrosColumnas.has(f));
+
+    if (columnasSeleccionadas.length === 0) return this._columnas();
+
+    return this._columnas().filter(columna =>
+      filtros.includes(columna.id as Filtro)
+    );
+  });
+
+  getTareasPorColumna(columnaId: string): Signal<Tarea[]> {
+    return computed(() => {
+      const orden = this._orden();
+      let tareas = this._tareas();
+
+      tareas = this.buscarTareas();
+      tareas = this.filtrarTareas(tareas);
+
+
+      switch (orden) {
+        case 'prioridad-asc':
+          tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] - this.ordenPrioridad[b.prioridad]);
+          break;
+        case 'prioridad-desc':
+          tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] - this.ordenPrioridad[a.prioridad]);
+          break;
+        case 'fecha-creacion-asc':
+          tareas.sort((a, b) => a.fechaCreacion - b.fechaCreacion);
+          break;
+        case 'fecha-creacion-desc':
+          tareas.sort((a, b) => b.fechaCreacion - a.fechaCreacion);
+          break;
+        case 'fecha-limite-asc':
+          tareas.sort((a, b) => a.fechaLimite - b.fechaLimite);
+          break;
+        case 'fecha-limite-desc':
+          tareas.sort((a, b) => b.fechaLimite - a.fechaLimite);
+          break;
+        default:
+          tareas.sort((a, b) => a.id - b.id);
+          break;
+      };
+
+      tareas = tareas.filter(tarea => tarea.estado === columnaId);
+      return tareas;
+    });
+  };
+
+  buscarTareas(): Tarea[] {
+    const busqueda = this._busqueda().toLowerCase().trim();
+    let tareas = this._tareas();
+
+    if (busqueda) {
+      tareas = tareas.filter(tarea => tarea.texto.toLowerCase().includes(busqueda));
+    }
+
+    return tareas;
+  }
+
+  filtrarTareas(tareas: Tarea[]): Tarea[] {
+      const filtros = this._filtroActivo();
+      const filtrosPrioridad = new Set(['Alta', 'Media', 'Baja']);
+
+      if (filtros.some(f => filtrosPrioridad.has(f))){
+        tareas = tareas.filter(tarea => filtros.includes(tarea.prioridad));
+      }
+
+      return tareas;
+  }
+
+// -------------- CONSTRUCTOR ------------------
 
   constructor() {
     this.cargarDesdeStorage();
   }
 
+// -------------- MÉTODOS PRIVADOS ---------------
+
   // Carga las tareas desde localStorage al iniciar el servicio
   private cargarDesdeStorage(): void {
     const tareasGuardadas = localStorage.getItem(this.storageKey);
 
-    if(!tareasGuardadas) {
+    if (!tareasGuardadas) {
       localStorage.setItem(this.storageKey, JSON.stringify([]));
       return;
     }
@@ -106,8 +169,10 @@ export class TareaService {
     return tareas.length > 0 ? Math.max(...tareas.map(tarea => tarea.id)) + 1 : 1;
   }
 
+// -------------- MÉTODOS PÚBLICOS ---------------
+
   // Agregar una nueva tarea
-  agregarTarea(texto: string, prioridad: 'Baja' | 'Media' | 'Alta', fechaLimite: string): void {
+  agregarTarea(texto: string, prioridad: Tarea['prioridad'], fechaLimite: string): void {
     const nuevaTarea: Tarea = {
       id: this.generarId(),
       texto,
@@ -116,7 +181,7 @@ export class TareaService {
       fechaCreacion: Date.now(),
       fechaLimite: new Date(fechaLimite).getTime()
     };
-    
+
     // Update de la signal de tareas
     // tareas es el parámetro actual y [...tareas, nuevaTarea] es
     // una nueva copia de tareas + la nueva
@@ -139,20 +204,12 @@ export class TareaService {
     this.guardar();
   }
 
-  // Completar tarea, con .map recorremos el array para devolver uno igual y 
-  // solo cambia el estado de un elemento si lo encuentra
-  completarTarea(tareaCompletada: Tarea): void {
-    this._tareas.update(tareas =>
-      tareas.map(tarea => tarea.id === tareaCompletada.id ? tareaCompletada : tarea));
-    this.guardar();
-  }
-
   // Cambiar la busqueda
   cambiarBusqueda(textoBusqueda: string): void {
     this._busqueda.set(textoBusqueda);
   };
 
-  cambiarOrden(criterioOrden: 'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc'): void {
+  cambiarOrden(criterioOrden: Orden): void {
     this._orden.set(criterioOrden);
   }
 
@@ -160,57 +217,9 @@ export class TareaService {
     this._filtroActivo.set(listaSeleccionados);
   }
 
-  getTareasPorColumna(columnaId: string): Signal<Tarea[]>{
-    return computed(() => {
-      const busqueda = this._busqueda().toLowerCase().trim();
-      const orden = this._orden();
-      const filtros = this._filtroActivo();
-      const filtrosPrioridad = new Set(['Alta', 'Media', 'Baja']);
-      let tareas = this._tareas();
-
-      // Set funciona como un objeto donde las claves son los valores
-      // Con .has accedemos directamente a la casilla del objeto y comprueba si existe o no
-      // no recorre nada, mucho más rapido
-      if(filtros.some(f => filtrosPrioridad.has(f))) {
-        tareas = tareas.filter(tarea => filtros.includes(tarea.prioridad));
-      }
-
-      if(busqueda) {
-        tareas = tareas.filter(tarea => tarea.texto.toLowerCase().includes(busqueda));
-      }
-
-      switch (orden) {
-        case 'prioridad-asc':
-          tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] - this.ordenPrioridad[b.prioridad]);
-          break;
-        case 'prioridad-desc':
-          tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] - this.ordenPrioridad[a.prioridad]);
-          break;
-        case 'fecha-creacion-asc':
-          tareas.sort((a, b) => a.fechaCreacion - b.fechaCreacion);
-          break;
-        case 'fecha-creacion-desc':
-          tareas.sort((a, b) => b.fechaCreacion - a.fechaCreacion);
-          break;
-        case 'fecha-limite-asc':
-          tareas.sort((a, b) => a.fechaLimite - b.fechaLimite);
-          break;
-        case 'fecha-limite-desc':
-          tareas.sort((a, b) => b.fechaLimite - a.fechaLimite);
-          break; 
-        default:
-          tareas.sort((a, b) => a.id - b.id);
-          break;
-      };
-
-      tareas = tareas.filter(tarea => tarea.estado === columnaId);
-      return tareas;
-    });
-  };
-
-  cambiarEstado(tarea: Tarea, nuevoEstado: 'backlog' | 'to-do' | 'doing' | 'done'): void {
-    this._tareas.update(tareas => 
-      tareas.map(t => t.id === tarea.id ? {...tarea, estado: nuevoEstado} : t)
+  cambiarEstado(tarea: Tarea, nuevoEstado: Tarea['estado']): void {
+    this._tareas.update(tareas =>
+      tareas.map(t => t.id === tarea.id ? { ...tarea, estado: nuevoEstado } : t)
     );
     this.guardar();
   }
@@ -218,7 +227,8 @@ export class TareaService {
   // EXPORTAR E IMPORTAR
 
   exportarTareas(): void {
-    const json = JSON.stringify(this._tareas(), null, 2); // null para que no filtre ni convierta las propiedades
+    let tareasSeleccionadas = this._tareas().filter(tarea => this._tareasSeleccionadas().includes(tarea.id));
+    const json = JSON.stringify(tareasSeleccionadas.length > 0 ? tareasSeleccionadas : this._tareas(), null, 2); // null para que no filtre ni convierta las propiedades
     const blob = new Blob([json], { type: 'application/json' }); // Objeto que representa datos en crudo, solo en memoria del navegador
     const url = URL.createObjectURL(blob); // Dirección temporal en memoria que apunta al Blob
     const a = this.document.createElement('a');
@@ -239,7 +249,7 @@ export class TareaService {
 
     // Como tenemos una lista de archivo, no acepta .map, por eso lo convertimos a Array normal
     for (const archivo of Array.from(input.files)) {
-      
+
       // Le indicamos a JS que espere hasta que la promesa se resuelva y "texto" tenga el valor leido
       // .text() lee los bytes del archivo y decodifica como texto UTF-8
       // cuando termina de leer, devuelve la promesa resuelta con el contenido
@@ -249,7 +259,7 @@ export class TareaService {
 
       this._tareas.update(tareas => {
         // Cogemos el ID más alto actual
-        const maxId = tareas.length > 0 ? Math.max(...tareas.map(t => t.id)): 0;
+        const maxId = tareas.length > 0 ? Math.max(...tareas.map(t => t.id)) : 0;
 
         // Reasignamos IDs a las tareas importadas partiendo desde el máximo
         const tareasConNuevoId = tareasImportadas.map((tarea, index) => ({

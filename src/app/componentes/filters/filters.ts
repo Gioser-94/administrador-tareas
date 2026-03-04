@@ -4,7 +4,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule, MatChipListboxChange } from '@angular/material/chips';
-export type Filtro = 'Alta' | 'Media' | 'Baja' | 'backlog' | 'to-do' | 'doing' | 'done';
+import { Filtro } from '../../interfaces/filtro';
+import { Orden } from '../../interfaces/orden';
 
 @Component({
   selector: 'app-filters',
@@ -22,7 +23,7 @@ export class Filters {
   ordenar(event: Event): void {
     const criterioOrden = (event.target as HTMLSelectElement).value;
     this.tareaService.cambiarOrden(
-      criterioOrden as 'sin-orden' | 'prioridad-asc' | 'prioridad-desc' | 'fecha-creacion-asc' | 'fecha-creacion-desc' | 'fecha-limite-asc' | 'fecha-limite-desc'
+      criterioOrden as Orden
     );
   };
 
