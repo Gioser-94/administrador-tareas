@@ -64,7 +64,7 @@
     background-color: grey !important;
 }
 
-:host ::ng-deep mat-checkbox.btn-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+:host ::ng-deep .btn-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
     background-color: var(--mat-sys-primary) !important;
     border-color: var(--mat-sys-primary) !important;
 }

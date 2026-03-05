@@ -6,13 +6,6 @@
   gap: 25px;
 }
 
-.filtro-orden {
-  min-width: 250px;
-  display: flex;
-  justify-content: flex-start;
-  gap: 12px;
-}
-
 .filtros-generales {
   display: flex;
   justify-content: center;
@@ -37,4 +30,41 @@
 
 .filtro-titulo {
   margin-top: 8px;
+  margin-left: 8px;
+}
+
+.filtros-orden-container { 
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-orden {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  margin-block: 4px;
+  border-radius: 8px;
+  border: 1px solid gray;
+  cursor: pointer;
+  gap: 4px;
+}
+
+::ng-deep .mdc-checkbox__ripple {
+    border-radius: 12px !important;
+    background-color: grey !important;
+}
+
+::ng-deep .btn-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+    background-color: var(--mat-sys-primary) !important;
+    border-color: var(--mat-sys-primary) !important;
+}
+
+/* Rango de fechas */
+
+::ng-deep .mdc-text-field--filled {
+  border-radius: 8px !important;
+}
+
+::ng-deep .mdc-line-ripple::after {
+  border-bottom-color: var(--mat-sys-primary) !important;
 }

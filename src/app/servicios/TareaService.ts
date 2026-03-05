@@ -3,7 +3,8 @@ import { DOCUMENT } from '@angular/common';
 import { Tarea } from '../interfaces/tarea';
 import { Columna } from '../interfaces/columnas';
 import { Filtro } from '../interfaces/filtro';
-import { Orden } from '../interfaces/orden';
+import { CriterioOrden } from '../interfaces/orden';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,11 @@ export class TareaService {
   private readonly _busqueda = signal<string>('');
 
   // Signal que guarda el orden
-  private readonly _orden = signal<Orden>('sin-orden');
+  private readonly _orden = signal<CriterioOrden[]>([
+    { nombre: 'Prioridad', campo: 'prioridad', direccion: 'asc', activo: false },
+    { nombre: 'Fecha creación', campo: 'fecha-creacion', direccion: 'asc', activo: false },
+    { nombre: 'Fecha límite', campo: 'fecha-limite', direccion: 'asc', activo: false }
+  ]);
 
   // Objeto para asignar un numero a cada prioridad
   private readonly ordenPrioridad = {
@@ -55,6 +60,9 @@ export class TareaService {
 
   // Signal para la lectura de las tareas seleccionas
   readonly tareasSeleccionadas = this._tareasSeleccionadas.asReadonly();
+
+  // Sigal para lectura de los criterios de orden
+  readonly orden = this._orden.asReadonly();
 
 
   // ------------ COMPUTED -----------------
@@ -76,43 +84,17 @@ export class TareaService {
 
   getTareasPorColumna(columnaId: string): Signal<Tarea[]> {
     return computed(() => {
-      const orden = this._orden();
-      let tareas = this._tareas();
 
-      tareas = this.buscarTareas();
+      let tareas = this.buscarTareas();
       tareas = this.filtrarTareas(tareas);
-
-
-      switch (orden) {
-        case 'prioridad-asc':
-          tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] - this.ordenPrioridad[b.prioridad]);
-          break;
-        case 'prioridad-desc':
-          tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] - this.ordenPrioridad[a.prioridad]);
-          break;
-        case 'fecha-creacion-asc':
-          tareas.sort((a, b) => a.fechaCreacion - b.fechaCreacion);
-          break;
-        case 'fecha-creacion-desc':
-          tareas.sort((a, b) => b.fechaCreacion - a.fechaCreacion);
-          break;
-        case 'fecha-limite-asc':
-          tareas.sort((a, b) => a.fechaLimite - b.fechaLimite);
-          break;
-        case 'fecha-limite-desc':
-          tareas.sort((a, b) => b.fechaLimite - a.fechaLimite);
-          break;
-        default:
-          tareas.sort((a, b) => a.id - b.id);
-          break;
-      };
-
+      tareas = this.ordenarTareas(tareas);
       tareas = tareas.filter(tarea => tarea.estado === columnaId);
+
       return tareas;
     });
   };
 
-  buscarTareas(): Tarea[] {
+  private buscarTareas(): Tarea[] {
     const busqueda = this._busqueda().toLowerCase().trim();
     let tareas = this._tareas();
 
@@ -123,16 +105,74 @@ export class TareaService {
     return tareas;
   }
 
-  filtrarTareas(tareas: Tarea[]): Tarea[] {
-      const filtros = this._filtroActivo();
-      const filtrosPrioridad = new Set(['Alta', 'Media', 'Baja']);
+  private filtrarTareas(tareas: Tarea[]): Tarea[] {
+    const filtros = this._filtroActivo();
+    const filtrosPrioridad = new Set(['Alta', 'Media', 'Baja']);
 
-      if (filtros.some(f => filtrosPrioridad.has(f))){
-        tareas = tareas.filter(tarea => filtros.includes(tarea.prioridad));
-      }
+    if (filtros.some(f => filtrosPrioridad.has(f))){
+      tareas = tareas.filter(tarea => filtros.includes(tarea.prioridad));
+    }
 
-      return tareas;
+    return tareas;
   }
+
+  private ordenarTareas(tareas: Tarea[]): Tarea[] {
+    const criterios = this._orden().filter(criterio => criterio.activo);
+
+    if (!criterios.length) {
+      return tareas.sort((a, b) => a.id - b.id);
+    };
+
+    return tareas.sort((a, b) => {
+      for (const criterio of criterios) {
+        let resultado = 0;
+
+        if (criterio.campo === 'prioridad') {
+          resultado = this.ordenPrioridad[b.prioridad] - this.ordenPrioridad[a.prioridad];
+        } else if (criterio.campo === 'fecha-creacion') {
+          resultado = a.fechaCreacion - b.fechaCreacion;
+        } else if (criterio.campo === 'fecha-limite') {
+          resultado = a.fechaLimite - b.fechaLimite;
+        }
+
+        if (criterio.direccion === 'desc') resultado *= -1;
+
+        if (resultado !== 0) return resultado;
+      }
+      return 0;
+    });
+  }
+/*
+  private ordenarTareas(tareas: Tarea[]): Tarea[] {
+    const orden = this._orden();
+
+    switch (orden) {
+      case 'prioridad-asc':
+        tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] - this.ordenPrioridad[a.prioridad]);
+        break;
+      case 'prioridad-desc':
+        tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] - this.ordenPrioridad[b.prioridad]);
+        break;
+      case 'fecha-creacion-asc':
+        tareas.sort((a, b) => a.fechaCreacion - b.fechaCreacion);
+        break;
+      case 'fecha-creacion-desc':
+        tareas.sort((a, b) => b.fechaCreacion - a.fechaCreacion);
+        break;
+      case 'fecha-limite-asc':
+        tareas.sort((a, b) => a.fechaLimite - b.fechaLimite);
+        break;
+      case 'fecha-limite-desc':
+        tareas.sort((a, b) => b.fechaLimite - a.fechaLimite);
+        break;
+      default:
+        tareas.sort((a, b) => a.id - b.id);
+        break;
+    };
+
+    return tareas;
+  }
+    */
 
 // -------------- CONSTRUCTOR ------------------
 
@@ -208,9 +248,37 @@ export class TareaService {
   cambiarBusqueda(textoBusqueda: string): void {
     this._busqueda.set(textoBusqueda);
   };
-
+/*
   cambiarOrden(criterioOrden: Orden): void {
     this._orden.set(criterioOrden);
+  }
+*/
+
+  reordenarOrden(indicePrevio: number, indiceActual: number): void {
+    this._orden.update(listaOrden => {
+      const nueva = [...listaOrden];
+      moveItemInArray(nueva, indicePrevio, indiceActual);
+      return nueva;
+    })
+  }
+
+  cambiarDireccionOrden(criterio: CriterioOrden): void {
+    this._orden.update(listaOrden => 
+      listaOrden.map(o => {
+        if (o.campo !== criterio.campo) return o;
+        return { ...o, direccion: criterio.direccion === 'asc' ? 'desc' : 'asc'};
+      }
+      )
+    )
+  }
+
+  toggleCriterio(criterio: CriterioOrden): void {
+    this._orden.update(listaOrden =>
+      listaOrden.map(o => {
+        if (o.campo !== criterio.campo) return o;
+        return { ...o, activo: !o.activo };
+      })
+    );
   }
 
   cambiarFiltro(listaSeleccionados: Filtro[]): void {
