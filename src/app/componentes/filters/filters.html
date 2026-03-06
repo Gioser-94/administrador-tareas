@@ -1,55 +1,5 @@
 <div class="contenedor-filtros">
 
-  <div class="filtros-generales">
-    <button mat-raised-button class="btn-filtros" [matMenuTriggerFor]="menu">
-      <mat-icon>tune</mat-icon>
-      Filtros
-    </button>
-    <mat-menu #menu="matMenu">
-      <div (click)="$event.stopPropagation()" class="contenido-menu" style="padding: 8px 16px">
-
-        <div class="filtros-orden-container" cdkDropList (cdkDropListDropped)="reordenarCriterios($event)">
-          <span class="filtro-titulo-orden">Ordenar por</span>
-          @for(criterio of criterios(); track criterio.campo) {
-            <div class="filtro-orden" cdkDrag>
-              <mat-icon>drag_indicator</mat-icon>
-              <mat-checkbox class="btn-checkbox" [disableRipple]="true" [checked]="criterio.activo"
-                (change)="tareaService.toggleCriterio(criterio)">
-              </mat-checkbox>
-              <span>{{ criterio.nombre }}</span>
-              <button (click)="this.tareaService.cambiarDireccionOrden(criterio)">
-                {{ criterio.direccion === 'asc' ? '↑' : '↓' }}
-              </button>
-            </div>
-          }
-        </div>
-
-        <mat-chip-listbox multiple (change)="filtrosSeleccionados($event)" selectable>
-          <span class="filtro-titulo">Prioridad</span>
-          <mat-chip-option value="Alta">Prioridad alta</mat-chip-option>
-          <mat-chip-option value="Media">Prioridad media</mat-chip-option>
-          <mat-chip-option value="Baja">Prioridad baja</mat-chip-option>
-          <span class="filtro-titulo">Estado</span>
-          <mat-chip-option value="backlog">Backlog</mat-chip-option>
-          <mat-chip-option value="to-do">To Do</mat-chip-option>
-          <mat-chip-option value="doing">Doing</mat-chip-option>
-          <mat-chip-option value="done">Done</mat-chip-option>
-        </mat-chip-listbox>
-
-        <mat-form-field>
-          <mat-label>Rango de fechas</mat-label>
-          <mat-date-range-input [rangePicker]="picker">
-            <input matStartDate placeholder="Fecha inicio">
-            <input matEndDate placeholder="Fecha fin">
-          </mat-date-range-input>
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field>
-
-      </div>
-    </mat-menu>
-  </div>
-
   <div class="filtros-seleccion">
     @if (tareasSeleccionas().length > 0) {
     <button mat-raised-button (click)="tareaService.seleccionarTodas()" class="btn-filtros">Seleccionar todas</button>

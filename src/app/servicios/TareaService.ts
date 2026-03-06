@@ -54,6 +54,11 @@ export class TareaService {
   // Signal para tareas seleccionadas, solo guardamos el id
   private readonly _tareasSeleccionadas = signal<number[]>([]);
 
+  // Signals para los rangos de fechas como filtros
+  private readonly _fechaLimiteInicioFiltro = signal<number | null>(null);
+  private readonly _fechaLimiteFinFiltro = signal<number | null>(null);
+  private readonly _fechaCreacionInicioFiltro = signal<number | null>(null);
+  private readonly _fechaCreacionFinFiltro = signal<number | null>(null);
 
 
   // ------------ SIGNALS PÚBLICAS ------------
@@ -87,6 +92,7 @@ export class TareaService {
 
       let tareas = this.buscarTareas();
       tareas = this.filtrarTareas(tareas);
+      tareas = this.filtarPorFecha(tareas);
       tareas = this.ordenarTareas(tareas);
       tareas = tareas.filter(tarea => tarea.estado === columnaId);
 
@@ -141,6 +147,28 @@ export class TareaService {
       }
       return 0;
     });
+  }
+
+  private filtarPorFecha(tareas: Tarea[]): Tarea[] {
+    const inicioCreacion = this._fechaCreacionInicioFiltro();
+    const finCreacion = this._fechaCreacionFinFiltro();
+    const inicioLimite = this._fechaLimiteInicioFiltro();
+    const finLimite = this._fechaLimiteFinFiltro();
+
+    if (inicioCreacion && finCreacion){
+      tareas = tareas.filter(tarea => 
+        tarea.fechaCreacion >= inicioCreacion && tarea.fechaCreacion <= finCreacion
+      );
+    }
+
+    if (inicioLimite && finLimite) {
+      tareas = tareas.filter(tarea => 
+        tarea.fechaLimite >= inicioLimite && tarea.fechaLimite <= finLimite
+      );
+    }
+    
+
+    return tareas;
   }
 /*
   private ordenarTareas(tareas: Tarea[]): Tarea[] {
@@ -272,7 +300,7 @@ export class TareaService {
     )
   }
 
-  toggleCriterio(criterio: CriterioOrden): void {
+  activarDesactivarOrden(criterio: CriterioOrden): void {
     this._orden.update(listaOrden =>
       listaOrden.map(o => {
         if (o.campo !== criterio.campo) return o;
@@ -290,6 +318,17 @@ export class TareaService {
       tareas.map(t => t.id === tarea.id ? { ...tarea, estado: nuevoEstado } : t)
     );
     this.guardar();
+  }
+
+  cambiarRangoFechas(inicio: number | null, fin: number | null, tipo: string): void {
+    if (tipo === 'creacion'){
+      this._fechaCreacionInicioFiltro.set(inicio);
+      this._fechaCreacionFinFiltro.set(fin);
+    } else {
+      this._fechaLimiteInicioFiltro.set(inicio);
+      this._fechaLimiteFinFiltro.set(fin);
+    }
+    
   }
 
   // EXPORTAR E IMPORTAR

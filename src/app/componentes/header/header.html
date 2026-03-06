@@ -1,6 +1,69 @@
 <mat-toolbar>
     <span>MyTasks</span>
     <button mat-stroked-button (click)="abrirFormulario()">Añadir tarea</button>
+    <button mat-stroked-button class="btn-filtros" [matMenuTriggerFor]="menu">
+        <mat-icon>tune</mat-icon>
+        Filtros
+    </button>
+    <mat-menu #menu="matMenu">
+        <div (click)="$event.stopPropagation()" class="contenido-menu" style="padding: 8px 16px">
+
+            <div class="filtros-orden-container" cdkDropList (cdkDropListDropped)="reordenarCriterios($event)">
+                <span class="filtro-titulo-orden">Ordenar por</span>
+                @for(criterio of criterios(); track criterio.campo) {
+                <div class="filtro-orden" cdkDrag>
+                    <mat-icon>drag_indicator</mat-icon>
+                    <mat-checkbox class="btn-checkbox" [disableRipple]="true" [checked]="criterio.activo"
+                        (change)="tareaService.activarDesactivarOrden(criterio)">
+                    </mat-checkbox>
+                    <span>{{ criterio.nombre }}</span>
+                    <button (click)="this.tareaService.cambiarDireccionOrden(criterio)">
+                        {{ criterio.direccion === 'asc' ? '↑' : '↓' }}
+                    </button>
+                </div>
+                }
+            </div>
+
+            <mat-chip-listbox multiple (change)="filtrosSeleccionados($event)" selectable>
+                <span class="filtro-titulo">Prioridad</span>
+                <mat-chip-option value="Alta">Prioridad alta</mat-chip-option>
+                <mat-chip-option value="Media">Prioridad media</mat-chip-option>
+                <mat-chip-option value="Baja">Prioridad baja</mat-chip-option>
+                <span class="filtro-titulo">Estado</span>
+                <mat-chip-option value="backlog">Backlog</mat-chip-option>
+                <mat-chip-option value="to-do">To Do</mat-chip-option>
+                <mat-chip-option value="doing">Doing</mat-chip-option>
+                <mat-chip-option value="done">Done</mat-chip-option>
+            </mat-chip-listbox>
+
+            <div class="filtros-rango-fechas">
+
+                <span class="filtro-titulo-fechas">Fecha creación</span>
+                <mat-form-field>
+                    <mat-label>Rango de fechas</mat-label>
+                    <mat-date-range-input [rangePicker]="pickerCreacion" [formGroup]="rangoFechasCreacion">
+                        <input matStartDate formControlName="inicio" placeholder="Fecha inicio">
+                        <input matEndDate formControlName="fin" placeholder="Fecha fin">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerCreacion"></mat-datepicker-toggle>
+                    <mat-date-range-picker #pickerCreacion></mat-date-range-picker>
+                </mat-form-field>
+
+                <span class="filtro-titulo-fechas">Fecha límite</span>
+                <mat-form-field>
+                    <mat-label>Rango de fechas</mat-label>
+                    <mat-date-range-input [rangePicker]="pickerLimite" [formGroup]="rangoFechasLimite">
+                        <input matStartDate formControlName="inicio" placeholder="Fecha inicio">
+                        <input matEndDate formControlName="fin" placeholder="Fecha fin">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerLimite"></mat-datepicker-toggle>
+                    <mat-date-range-picker #pickerLimite></mat-date-range-picker>
+                </mat-form-field>
+
+            </div>
+
+        </div>
+    </mat-menu>
     <span class="spacer"></span>
     <div class="buscador">
         <input type="text" (input)="buscar($event)" placeholder="Buscar tarea..." />
@@ -11,7 +74,7 @@
     #fileInput es una variable referencial de template de Angular
     Nos sirve para ligar el boton con el input
     -->
-    <input  #fileInput type="file" multiple accept=".json" hidden (change)="importar($event)">
+    <input #fileInput type="file" multiple accept=".json" hidden (change)="importar($event)">
     <button mat-stroked-button (click)="fileInput.click()">Import</button>
     <button mat-stroked-button (click)="exportar()">Export</button>
 </mat-toolbar>

@@ -46,3 +46,129 @@ button[mat-stroked-button] {
 .buscador mat-icon {
   color: white;
 }
+
+/* FILTROS */
+
+.contenedor-filtros {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+  gap: 25px;
+}
+
+.filtros-generales {
+  display: flex;
+  justify-content: center;
+}
+
+.filtros-seleccion {
+  min-width: 250px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Ampliar el area en la que podemos pulsar de los botones de filtros */
+::ng-deep .mat-mdc-standard-chip.mdc-evolution-chip--with-primary-graphic .mdc-evolution-chip__action--primary {
+  width: 100%;
+}
+/* Centrar texto de los botones de filtros */
+::ng-deep .mdc-evolution-chip__text-label {
+  text-align: center;
+  width: 100%;
+}
+
+.btn-filtros {
+  background-color: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+::ng-deep .mdc-evolution-chip-set__chips {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.filtro-titulo {
+  margin-top: 8px;
+  margin-left: 8px;
+}
+
+.filtro-titulo-fechas {
+  margin-top: 8px;
+}
+
+.filtros-orden-container { 
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-orden {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  margin-block: 4px;
+  border-radius: 8px;
+  border: 1px solid gray;
+  cursor: pointer;
+  gap: 4px;
+}
+
+.filtros-rango-fechas {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+::ng-deep .mdc-checkbox__ripple {
+    border-radius: 12px !important;
+    background-color: grey !important;
+}
+
+::ng-deep .btn-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+    background-color: var(--mat-sys-primary) !important;
+    border-color: var(--mat-sys-primary) !important;
+}
+
+/* Rango de fechas */
+
+::ng-deep .mdc-text-field--filled {
+  border-radius: 8px !important;
+}
+
+::ng-deep .mdc-line-ripple::after {
+  border-bottom-color: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
+  caret-color: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-floating-label {
+  color: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mat-datepicker-toggle-active {
+  color: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+  border-color: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mat-calendar-body-in-preview {
+  color: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mat-calendar-body-selected.mat-calendar-body-today {
+  box-shadow: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mat-calendar-body-selected {
+  background-color: var(--mat-sys-primary) !important;
+}
+
+::ng-deep .mat-calendar-body-in-range::before {
+  background: var(--mat-sys-primary) !important;
+  opacity: 0.2;
+}
