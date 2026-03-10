@@ -14,12 +14,13 @@ import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { CriterioOrden } from '../../interfaces/orden';
 import { MatChipsModule, MatChipListboxChange } from "@angular/material/chips";
 import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatNativeDateModule } from '@angular/material/core'; 
 import { Filtro } from '../../interfaces/filtro';
 
 
 @Component({
   selector: 'app-header',
-  imports: [MatToolbarModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule, MatMenuModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, ReactiveFormsModule, DragDropModule],
+  imports: [MatToolbarModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatIconModule, MatMenuModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatNativeDateModule, ReactiveFormsModule, DragDropModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -98,6 +99,6 @@ export class Header implements OnInit{
   }
 
   reordenarCriterios(event: CdkDragDrop<CriterioOrden[]>): void {
-    this.tareaService.reordenarOrden(event.previousIndex, event.currentIndex);
+    this.tareaService.cambiarOrden(event.previousIndex, event.currentIndex);
   }
 }

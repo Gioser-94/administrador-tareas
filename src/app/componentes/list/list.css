@@ -5,10 +5,9 @@
     padding: 16px;
     background: #f4f5f7;
     border-radius: 8px;
-    overflow-x: auto; /* scroll horizontal si no caben */
     align-items: flex-start; /* columnas se adaptan al contenido */
     width: fit-content;
-    max-width: 100%;
+    margin: 0 auto;
 }
 
 .columna {

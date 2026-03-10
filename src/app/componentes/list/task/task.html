@@ -18,6 +18,13 @@
             Restante:
             <span app-tiempo-restante [fechaLimite]="tarea.fechaLimite"></span>
         </div>
+        <mat-chip-set>
+            @for (tag of tarea.tags; track tag){
+                <mat-chip>
+                    {{ tag }}
+                </mat-chip>
+            }
+        </mat-chip-set>
     </div>
     <div class="tarea-footer">
         <div class="botones">

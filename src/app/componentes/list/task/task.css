@@ -68,3 +68,24 @@
     background-color: var(--mat-sys-primary) !important;
     border-color: var(--mat-sys-primary) !important;
 }
+
+/* Tags */
+:host ::ng-deep .mdc-evolution-chip-set__chips {
+  flex-direction: row !important;
+}
+
+:host ::ng-deep .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) {
+  background-color: rgb(146, 146, 219);
+}
+
+:host ::ng-deep .mat-mdc-standard-chip {
+  height: 15px;
+}
+
+:host ::ng-deep .mdc-evolution-chip {
+  width: fit-content;
+}
+
+:host ::ng-deep .mat-mdc-standard-chip .mdc-evolution-chip__text-label {
+  font-size: 11px;
+}

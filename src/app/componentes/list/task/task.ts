@@ -9,10 +9,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { Form } from '../../form/form';
 import { Tarea } from '../../../interfaces/tarea';
+import { MatChipsModule } from "@angular/material/chips";
 
 @Component({
   selector: 'app-task',
-  imports: [CommonModule, TiempoRestante, MatButtonModule, MatIconModule, DragDropModule, MatCheckboxModule],
+  imports: [CommonModule, TiempoRestante, MatButtonModule, MatIconModule, DragDropModule, MatCheckboxModule, MatChipsModule],
   templateUrl: './task.html',
   styleUrl: './task.css'
 })
@@ -20,6 +21,8 @@ export class Task {
   
   readonly tareaService = inject(TareaService);
   private readonly dialog = inject(MatDialog);
+
+  readonly tagsGuardados = this.tareaService.tagsUsadas;
 
   @Input() tarea!: Tarea;
 

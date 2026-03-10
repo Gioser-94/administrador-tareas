@@ -60,6 +60,9 @@ export class TareaService {
   private readonly _fechaCreacionInicioFiltro = signal<number | null>(null);
   private readonly _fechaCreacionFinFiltro = signal<number | null>(null);
 
+  // Signal para tags ya usadas
+  private readonly _tagsUsadas = signal<string[]>([]);
+
 
   // ------------ SIGNALS PÚBLICAS ------------
 
@@ -68,6 +71,9 @@ export class TareaService {
 
   // Sigal para lectura de los criterios de orden
   readonly orden = this._orden.asReadonly();
+
+  // Signal para lectura de las tags ya usadas
+  readonly tagsUsadas = this._tagsUsadas.asReadonly();
 
 
   // ------------ COMPUTED -----------------
@@ -123,6 +129,7 @@ export class TareaService {
   }
 
   private ordenarTareas(tareas: Tarea[]): Tarea[] {
+    // Solo ordenaremos por los criterios que estén activos con el checkbox
     const criterios = this._orden().filter(criterio => criterio.activo);
 
     if (!criterios.length) {
@@ -221,11 +228,26 @@ export class TareaService {
 
     // Aseguramos a TS que lo que va a recibir es un array de Tarea
     this._tareas.set(JSON.parse(tareasGuardadas) as Tarea[]);
+
+    // Cargar tags guardadas
+    const tagsGuardadas = localStorage.getItem('tags');
+
+    if(!tagsGuardadas) {
+      localStorage.setItem('tags', JSON.stringify([]));
+      return;
+    }
+
+    this._tagsUsadas.set(JSON.parse(tagsGuardadas) as string[]);
   }
 
   // Guardar las tareas en localStorage
   private guardar(): void {
     localStorage.setItem(this.storageKey, JSON.stringify(this._tareas()));
+  }
+
+  // Guardar las tags en localStorage
+  private guardarTags(): void {
+    localStorage.setItem('tags', JSON.stringify(this._tagsUsadas()));
   }
 
   // Generar un ID único comprobando las tareas existentes
@@ -240,14 +262,15 @@ export class TareaService {
 // -------------- MÉTODOS PÚBLICOS ---------------
 
   // Agregar una nueva tarea
-  agregarTarea(texto: string, prioridad: Tarea['prioridad'], fechaLimite: string): void {
+  agregarTarea(texto: string, prioridad: Tarea['prioridad'], fechaLimite: string, tags: string[]): void {
     const nuevaTarea: Tarea = {
       id: this.generarId(),
       texto,
       prioridad,
       estado: 'backlog',
       fechaCreacion: Date.now(),
-      fechaLimite: new Date(fechaLimite).getTime()
+      fechaLimite: new Date(fechaLimite).getTime(),
+      tags
     };
 
     // Update de la signal de tareas
@@ -276,15 +299,13 @@ export class TareaService {
   cambiarBusqueda(textoBusqueda: string): void {
     this._busqueda.set(textoBusqueda);
   };
-/*
-  cambiarOrden(criterioOrden: Orden): void {
-    this._orden.set(criterioOrden);
-  }
-*/
 
-  reordenarOrden(indicePrevio: number, indiceActual: number): void {
+
+  cambiarOrden(indicePrevio: number, indiceActual: number): void {
     this._orden.update(listaOrden => {
+      // Creamos una copia para no mutar la existente, si no la signal no se entera
       const nueva = [...listaOrden];
+      // Utilidad de Angular CDK para mover elementos
       moveItemInArray(nueva, indicePrevio, indiceActual);
       return nueva;
     })
@@ -300,6 +321,8 @@ export class TareaService {
     )
   }
 
+  // Buscamos el objeto de la signal de orden que concuerde con el criterio de 
+  // orden activado y cuando lo encuentre, le cambiamos la propiedad "activo"
   activarDesactivarOrden(criterio: CriterioOrden): void {
     this._orden.update(listaOrden =>
       listaOrden.map(o => {
@@ -309,10 +332,12 @@ export class TareaService {
     );
   }
 
+  // Sobreescribimos la signal de filtros activos según los marcados en Prioridad y Estado
   cambiarFiltro(listaSeleccionados: Filtro[]): void {
     this._filtroActivo.set(listaSeleccionados);
   }
 
+  // Cambiamos el estado al hacer drag and drop
   cambiarEstado(tarea: Tarea, nuevoEstado: Tarea['estado']): void {
     this._tareas.update(tareas =>
       tareas.map(t => t.id === tarea.id ? { ...tarea, estado: nuevoEstado } : t)
@@ -329,6 +354,14 @@ export class TareaService {
       this._fechaLimiteFinFiltro.set(fin);
     }
     
+  }
+
+  // TAGS
+
+  anadirTags(tags: string[]): void {
+    const tagsNuevas = tags.filter(tag => !this._tagsUsadas().includes(tag));
+    this._tagsUsadas.update(tags => [...tags, ...tagsNuevas]);
+    this.guardarTags();
   }
 
   // EXPORTAR E IMPORTAR
@@ -412,6 +445,7 @@ export class TareaService {
   }
 
   // Signal que reacciona cuando cambiamos la signal de seleccionadas
+  // .includes retorna boolean
   estaSeleccionada(id: number): Signal<boolean> {
     return computed(() => this._tareasSeleccionadas().includes(id));
   }

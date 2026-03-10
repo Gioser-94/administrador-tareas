@@ -47,11 +47,35 @@
                 </div>
             </div>
         </div>
+        <mat-form-field>
+            <mat-label>Tags</mat-label>
+            <mat-chip-grid #chipGrid>
+                @for (tag of tareaForm.get('tags')?.value; track tag) {
+                    <mat-chip-row (removed)="quitarTag(tag)">
+                        {{ tag }}
+                        <button matChipRemove><mat-icon>cancel</mat-icon></button>
+                    </mat-chip-row>
+                }
+                <input 
+                    placeholder="Añadir tag..."
+                    [matChipInputFor]="chipGrid"
+                    [matAutocomplete]="auto"
+                    [formControl]="tagInput"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="anadirTagManual($event)"
+                />
+            </mat-chip-grid>
+        </mat-form-field>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="anadirTag($event.option.value)">
+            @for (opcion of tagsSugeridos(); track opcion) {
+                <mat-option [value]="opcion">{{ opcion }}</mat-option>
+            }
+        </mat-autocomplete>
         <div [ngClass]="data.modo === 'crear' ? 'boton-container' : 'botones-container'">
-            <button type="submit" class="btn-submit">{{data.modo === 'crear' ? 'Añadir' : 'Editar'}}</button>
             @if (data.modo === 'editar'){
                 <button type="button" class="btn-cancelar" (click)="cancelarEditarTarea()">Cancelar</button>
             }
+            <button type="submit" class="btn-submit">{{data.modo === 'crear' ? 'Añadir' : 'Editar'}}</button>
         </div>
     </form>
 </div>

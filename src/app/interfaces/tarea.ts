@@ -5,4 +5,5 @@ export interface Tarea {
     estado: 'backlog' | 'to-do' | 'doing' | 'done';
     fechaCreacion: number;
     fechaLimite: number;
+    tags: string[];
 }
