@@ -109,7 +109,7 @@
 
 /* Configuración de la tag, colores... */
 ::ng-deep .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) {
-    background-color: var(--mat-sys-primary);
+    background-color: var(--tag-color, #9292db);
 }
 
 ::ng-deep .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
@@ -118,4 +118,32 @@
 
 ::ng-deep .mat-mdc-standard-chip {
     border-radius: 22px !important;
+}
+
+.color-paleta {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-block: 15px;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+
+    &.visible {
+        max-height: 100px;
+        opacity: 1;
+    }
+}
+
+.color-tag {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s;
+
+  &.selected {
+    transform: scale(1.3);
+    outline: 2px solid white;
+  }
 }

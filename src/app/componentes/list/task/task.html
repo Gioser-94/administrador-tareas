@@ -20,8 +20,8 @@
         </div>
         <mat-chip-set>
             @for (tag of tarea.tags; track tag){
-                <mat-chip>
-                    {{ tag }}
+                <mat-chip [style.--tag-color]="tag.color">
+                    {{ tag.nombre }}
                 </mat-chip>
             }
         </mat-chip-set>

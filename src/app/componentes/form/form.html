@@ -49,10 +49,26 @@
         </div>
         <mat-form-field>
             <mat-label>Tags</mat-label>
+            <div class="color-paleta" [class.visible]="paletaVisible">
+                @for (color of coloresPaleta; track color) {
+                    <span
+                        class="color-tag"
+                        [style.backgroundColor]="color"
+                        [class.selected]="colorNuevaTag === color"
+                        (mousedown)="$event.preventDefault()"
+                        (click)="colorNuevaTag = color"
+                        onkeypress
+                    >
+                    </span>
+                }
+            </div>
             <mat-chip-grid #chipGrid>
                 @for (tag of tareaForm.get('tags')?.value; track tag) {
-                    <mat-chip-row (removed)="quitarTag(tag)">
-                        {{ tag }}
+                    <mat-chip-row
+                        (removed)="quitarTag(tag)"
+                        [style.--tag-color]="tag.color"
+                    >
+                        {{ tag.nombre }}
                         <button matChipRemove><mat-icon>cancel</mat-icon></button>
                     </mat-chip-row>
                 }
@@ -63,12 +79,14 @@
                     [formControl]="tagInput"
                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                     (matChipInputTokenEnd)="anadirTagManual($event)"
+                    (focus)="paletaVisible = true"
+                    (blur)="paletaVisible = false" 
                 />
             </mat-chip-grid>
         </mat-form-field>
         <mat-autocomplete #auto="matAutocomplete" (optionSelected)="anadirTag($event.option.value)">
-            @for (opcion of tagsSugeridos(); track opcion) {
-                <mat-option [value]="opcion">{{ opcion }}</mat-option>
+            @for (opcion of tagsSugeridos(); track opcion.nombre) {
+                <mat-option [value]="opcion">{{ opcion.nombre }}</mat-option>
             }
         </mat-autocomplete>
         <div [ngClass]="data.modo === 'crear' ? 'boton-container' : 'botones-container'">

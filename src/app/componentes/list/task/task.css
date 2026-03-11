@@ -75,7 +75,7 @@
 }
 
 :host ::ng-deep .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) {
-  background-color: rgb(146, 146, 219);
+  background-color: var(--tag-color, #9292db);
 }
 
 :host ::ng-deep .mat-mdc-standard-chip {

@@ -5,6 +5,7 @@ import { Columna } from '../interfaces/columnas';
 import { Filtro } from '../interfaces/filtro';
 import { CriterioOrden } from '../interfaces/orden';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { Tag } from '../interfaces/tag';
 
 @Injectable({
   providedIn: 'root'
@@ -52,7 +53,7 @@ export class TareaService {
   }
 
   // Signal para tareas seleccionadas, solo guardamos el id
-  private readonly _tareasSeleccionadas = signal<number[]>([]);
+  private readonly _tareasSeleccionadas = signal<string[]>([]);
 
   // Signals para los rangos de fechas como filtros
   private readonly _fechaLimiteInicioFiltro = signal<number | null>(null);
@@ -61,7 +62,7 @@ export class TareaService {
   private readonly _fechaCreacionFinFiltro = signal<number | null>(null);
 
   // Signal para tags ya usadas
-  private readonly _tagsUsadas = signal<string[]>([]);
+  private readonly _tagsUsadas = signal<Tag[]>([]);
 
 
   // ------------ SIGNALS PÚBLICAS ------------
@@ -132,9 +133,9 @@ export class TareaService {
     // Solo ordenaremos por los criterios que estén activos con el checkbox
     const criterios = this._orden().filter(criterio => criterio.activo);
 
-    if (!criterios.length) {
-      return tareas.sort((a, b) => a.id - b.id);
-    };
+    // if (!criterios.length) {
+    //   return tareas;
+    // };
 
     return tareas.sort((a, b) => {
       for (const criterio of criterios) {
@@ -177,37 +178,6 @@ export class TareaService {
 
     return tareas;
   }
-/*
-  private ordenarTareas(tareas: Tarea[]): Tarea[] {
-    const orden = this._orden();
-
-    switch (orden) {
-      case 'prioridad-asc':
-        tareas.sort((a, b) => this.ordenPrioridad[b.prioridad] - this.ordenPrioridad[a.prioridad]);
-        break;
-      case 'prioridad-desc':
-        tareas.sort((a, b) => this.ordenPrioridad[a.prioridad] - this.ordenPrioridad[b.prioridad]);
-        break;
-      case 'fecha-creacion-asc':
-        tareas.sort((a, b) => a.fechaCreacion - b.fechaCreacion);
-        break;
-      case 'fecha-creacion-desc':
-        tareas.sort((a, b) => b.fechaCreacion - a.fechaCreacion);
-        break;
-      case 'fecha-limite-asc':
-        tareas.sort((a, b) => a.fechaLimite - b.fechaLimite);
-        break;
-      case 'fecha-limite-desc':
-        tareas.sort((a, b) => b.fechaLimite - a.fechaLimite);
-        break;
-      default:
-        tareas.sort((a, b) => a.id - b.id);
-        break;
-    };
-
-    return tareas;
-  }
-    */
 
 // -------------- CONSTRUCTOR ------------------
 
@@ -237,7 +207,7 @@ export class TareaService {
       return;
     }
 
-    this._tagsUsadas.set(JSON.parse(tagsGuardadas) as string[]);
+    this._tagsUsadas.set(JSON.parse(tagsGuardadas) as Tag[]);
   }
 
   // Guardar las tareas en localStorage
@@ -250,21 +220,12 @@ export class TareaService {
     localStorage.setItem('tags', JSON.stringify(this._tagsUsadas()));
   }
 
-  // Generar un ID único comprobando las tareas existentes
-  // Math.max(...tareas.map(tarea => tarea.id)) + 1 -> coge el id con el numero mayor
-  // de la signal de tareas, para ello ... expande el array que crea .map en valores
-  // individuales: [1, 2, 3] -> (1, 2, 3)  se coge el mayor de ellos y se le suma 1
-  private generarId(): number {
-    const tareas = this._tareas();
-    return tareas.length > 0 ? Math.max(...tareas.map(tarea => tarea.id)) + 1 : 1;
-  }
-
 // -------------- MÉTODOS PÚBLICOS ---------------
 
   // Agregar una nueva tarea
-  agregarTarea(texto: string, prioridad: Tarea['prioridad'], fechaLimite: string, tags: string[]): void {
+  agregarTarea(texto: string, prioridad: Tarea['prioridad'], fechaLimite: string, tags: Tag[]): void {
     const nuevaTarea: Tarea = {
-      id: this.generarId(),
+      id: crypto.randomUUID(),
       texto,
       prioridad,
       estado: 'backlog',
@@ -290,7 +251,7 @@ export class TareaService {
   };
 
   // Borrar tarea
-  borrarTarea(id: number): void {
+  borrarTarea(id: string): void {
     this._tareas.update(tareas => tareas.filter(tarea => tarea.id !== id));
     this.guardar();
   }
@@ -358,8 +319,8 @@ export class TareaService {
 
   // TAGS
 
-  anadirTags(tags: string[]): void {
-    const tagsNuevas = tags.filter(tag => !this._tagsUsadas().includes(tag));
+  anadirTags(tags: Tag[]): void {
+    const tagsNuevas = tags.filter(tag => !this._tagsUsadas().some(tagUsada => tagUsada.nombre === tag.nombre));
     this._tagsUsadas.update(tags => [...tags, ...tagsNuevas]);
     this.guardarTags();
   }
@@ -398,13 +359,11 @@ export class TareaService {
       const tareasImportadas = JSON.parse(texto) as Tarea[];
 
       this._tareas.update(tareas => {
-        // Cogemos el ID más alto actual
-        const maxId = tareas.length > 0 ? Math.max(...tareas.map(t => t.id)) : 0;
 
-        // Reasignamos IDs a las tareas importadas partiendo desde el máximo
-        const tareasConNuevoId = tareasImportadas.map((tarea, index) => ({
+        // Reasignamos IDs a las tareas importadas 
+        const tareasConNuevoId = tareasImportadas.map(tarea => ({
           ...tarea,
-          id: maxId + index + 1
+          id: crypto.randomUUID()
         }));
         return [...tareas, ...tareasConNuevoId];
       });
@@ -415,7 +374,7 @@ export class TareaService {
   // SELECCIÓN DE TAREAS
 
   // Comprueba si esta o no seleccionada, añade o quita en función de la comprobación
-  alternarGuardadoSeleccionadas(id: number): void {
+  alternarGuardadoSeleccionadas(id: string): void {
     this._tareasSeleccionadas.update(seleccionadas =>
       seleccionadas.includes(id)
         ? seleccionadas.filter(s => s !== id) // si ya estaba, la quita
@@ -446,7 +405,7 @@ export class TareaService {
 
   // Signal que reacciona cuando cambiamos la signal de seleccionadas
   // .includes retorna boolean
-  estaSeleccionada(id: number): Signal<boolean> {
+  estaSeleccionada(id: string): Signal<boolean> {
     return computed(() => this._tareasSeleccionadas().includes(id));
   }
 }

@@ -33,7 +33,7 @@ export class Task {
     Alta: 'prio-alta'
   };
 
-  borrarTarea(id: number): void {
+  borrarTarea(id: string): void {
     this.tareaService.borrarTarea(id);
   };
 

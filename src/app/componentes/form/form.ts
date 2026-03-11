@@ -9,6 +9,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { Tag } from '../../interfaces/tag';
 
 
 @Component({
@@ -32,6 +33,20 @@ export class Form implements OnInit{
   readonly tagsSugeridos = this.tareaService.tagsUsadas;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
+  // Colores predefinidos para las tags
+  coloresPaleta = [
+    '#e57373', // rojo
+    '#ffb74d', // naranja
+    '#fff176', // amarillo
+    '#81c784', // verde
+    '#64b5f6', // azul
+    '#9575cd', // morado
+    '#f06292', // rosa
+    '#4db6ac'  // teal
+  ];
+  colorNuevaTag = this.coloresPaleta[0];
+  paletaVisible = false;
+
   // fb.group crea un FormGroup, que es el objeto que representa el formulario entero
   // Se define dentro cada campo del formulario
   // nombre_campo: [valor_inicial, validadores]
@@ -41,7 +56,7 @@ export class Form implements OnInit{
     texto: ['', [Validators.required, Validators.maxLength(50)]], // FormControl
     prioridad: ['', Validators.required],
     fechaLimite: ['', [Validators.required, fechaValida]],
-    tags: this.fb.control<string[]>([])
+    tags: this.fb.control<Tag[]>([])
   });
 
   tagInput = new FormControl('');
@@ -72,7 +87,12 @@ export class Form implements OnInit{
       tags!
     );
 
-    this.tareaService.anadirTags(tags as string[]);
+    const tagsSinColor: Tag[] = (tags ?? []).map(tag => ({
+      nombre: tag.nombre,
+      color: ''
+    }));
+    console.log(tagsSinColor);
+    this.tareaService.anadirTags(tagsSinColor);
 
     // Resetea todos los valores
     this.tareaForm.reset({
@@ -107,31 +127,40 @@ export class Form implements OnInit{
   }
 
   //------------TAGS-------------
-  anadirTag(tag: string) {
-    const tagsActuales: string[] = this.tareaForm.controls.tags.value as string[];
+  anadirTag(tag: Tag) {
+    console.log(tag.nombre)
+    const tagsActuales: Tag[] = this.tareaForm.controls.tags.value as Tag[];
+    console.log(tagsActuales);
 
     // Evita duplicados
-    if (tagsActuales.includes(tag)) return;
+    if (tagsActuales.some(t => t.nombre === tag.nombre)) return;
+
+    // Añadimos el color a la tag
+    const tagColorNuevo: Tag = {
+      nombre: tag.nombre,
+      color: this.colorNuevaTag
+    };
 
     // Actualiza el array de tags en el formulario
-    this.tareaForm.controls.tags.setValue([...tagsActuales, tag]);
+    this.tareaForm.controls.tags.setValue([...tagsActuales, tagColorNuevo]);
 
     // Limpia el input de escritura para que quede vacío tras seleccionar
     this.tagInput.setValue('');
   }
 
-  quitarTag(tag: string) {
-    const tagsActuales: string[] = this.tareaForm.controls.tags.value as string[];
+  quitarTag(tag: Tag) {
+    const tagsActuales: Tag[] = this.tareaForm.controls.tags.value as Tag[];
 
     this.tareaForm.controls.tags.setValue(
-      tagsActuales.filter(t => t !== tag)
+      tagsActuales.filter(t => t.nombre !== tag.nombre)
     );
   }
 
   anadirTagManual(event: MatChipInputEvent) {
-    const tag = event.value.trim();
-    if (tag) {
-      this.anadirTag(tag);
+    const nombreTag = event.value.trim();
+    if (nombreTag) {
+      const tagsActuales: Tag[] = this.tareaForm.controls.tags.value as Tag[];
+      this.tareaForm.controls.tags.setValue([...tagsActuales, { nombre: nombreTag , color: this.colorNuevaTag }])
     }
     event.chipInput.clear();
   }
