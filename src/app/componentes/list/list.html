@@ -5,8 +5,13 @@
             <h3>{{columna.titulo}}</h3>
             <p>Tareas ({{tareaService.getTareasPorColumna(columna.id)().length}})</p>
         </div>
-        <div class="contenedor-tareas" cdkDropList [id]="columna.id"
-            [cdkDropListData]="tareaService.getTareasPorColumna(columna.id)()" (cdkDropListDropped)="drop($event)">
+        <div
+            class="contenedor-tareas"
+            cdkDropList 
+            [id]="columna.id"
+            [cdkDropListData]="tareaService.getTareasPorColumna(columna.id)()"
+            (cdkDropListDropped)="drop($event)"
+        >
             @for(tarea of tareaService.getTareasPorColumna(columna.id)(); track tarea.id){
                 <app-task [tarea]="tarea"></app-task>
             }
@@ -14,3 +19,33 @@
     </div>
     }
 </div>
+
+
+<section class="board">
+    <div class="board__scroller">
+        <div class="board__columns" cdkDropListGroup>
+            @for(columna of columnasFiltradas(); track columna.id) {
+                <section class="board-column">
+                    <header class="board-column__header">
+                        <h2 class="board-column__title">{{ columna.titulo }}</h2>
+                        <p class="board-column__count">Tareas ({{tareaService.getTareasPorColumna(columna.id)().length}})</p>
+                    </header>
+
+                    <div
+                        class="board-column__tasks"
+                        cdkDropList
+                        [id]="columna.id"
+                        [cdkDropListData]="tareaService.getTareasPorColumna(columna.id)()"
+                        (cdkDropListDropped)="drop($event)"
+                    >
+                        @for(tarea of tareaService.getTareasPorColumna(columna.id)(); track tarea.id){
+                            <article class="task-card">
+                                <app-task [tarea]="tarea"></app-task>
+                            </article>                     
+                        }
+                    </div>
+                </section>
+            }
+        </div>
+    </div>
+</section>

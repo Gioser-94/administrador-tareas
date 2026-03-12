@@ -4,7 +4,7 @@ import { Tarea } from '../interfaces/tarea';
 import { Columna } from '../interfaces/columnas';
 import { Filtro } from '../interfaces/filtro';
 import { CriterioOrden } from '../interfaces/orden';
-import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Tag } from '../interfaces/tag';
 
 @Injectable({
@@ -109,7 +109,7 @@ export class TareaService {
 
   private buscarTareas(): Tarea[] {
     const busqueda = this._busqueda().toLowerCase().trim();
-    let tareas = this._tareas();
+    let tareas = [...this._tareas()];
 
     if (busqueda) {
       tareas = tareas.filter(tarea => tarea.texto.toLowerCase().includes(busqueda));
@@ -133,11 +133,11 @@ export class TareaService {
     // Solo ordenaremos por los criterios que estén activos con el checkbox
     const criterios = this._orden().filter(criterio => criterio.activo);
 
-    // if (!criterios.length) {
-    //   return tareas;
-    // };
+    if (!criterios.length) {
+      return [...tareas].sort((a, b) => a.orden - b.orden);
+    };
 
-    return tareas.sort((a, b) => {
+    return [...tareas].sort((a, b) => {
       for (const criterio of criterios) {
         let resultado = 0;
 
@@ -224,11 +224,17 @@ export class TareaService {
 
   // Agregar una nueva tarea
   agregarTarea(texto: string, prioridad: Tarea['prioridad'], fechaLimite: string, tags: Tag[]): void {
+
+    // Para conseguir los arrays internos de las columnas
+    // y así poder asignar un orden
+    const tareasDeBacklog = this._tareas().filter(t => t.estado === 'backlog');
+
     const nuevaTarea: Tarea = {
       id: crypto.randomUUID(),
       texto,
       prioridad,
       estado: 'backlog',
+      orden: tareasDeBacklog.length,
       fechaCreacion: Date.now(),
       fechaLimite: new Date(fechaLimite).getTime(),
       tags
@@ -299,11 +305,83 @@ export class TareaService {
   }
 
   // Cambiamos el estado al hacer drag and drop
-  cambiarEstado(tarea: Tarea, nuevoEstado: Tarea['estado']): void {
-    this._tareas.update(tareas =>
-      tareas.map(t => t.id === tarea.id ? { ...tarea, estado: nuevoEstado } : t)
+  // cambiarEstado(tarea: Tarea, nuevoEstado: Tarea['estado']): void {
+  //   this._tareas.update(tareas =>
+  //     tareas.map(t => t.id === tarea.id ? { ...tarea, estado: nuevoEstado } : t)
+  //   );
+  //   this.guardar();
+  // }
+
+  // Pasar tareas de una columna a otra, teniendo en cuenta el indice
+  transferirEntreColumnas(
+    columnaOrigen: Tarea[],
+    columnaDestino: Tarea[],
+    indicePrevio: number,
+    indiceFinal: number,
+    nuevoEstado: Tarea['estado']
+  ): void {
+    const origenReordenado = [...columnaOrigen];
+    const destinoReordenado = [...columnaDestino];
+
+    transferArrayItem(origenReordenado, destinoReordenado, indicePrevio, indiceFinal);
+
+    const nuevosOrdenesOrigen = new Map(
+      origenReordenado.map((tarea, index) => [tarea.id, index])
     );
+
+    const nuevosOrdenesDestino = new Map(
+      destinoReordenado.map((tarea, index) => [tarea.id, index])
+    );
+
+    this._tareas.update(tareas =>
+      tareas.map(t => {
+        if (nuevosOrdenesOrigen.has(t.id)) {
+          return {
+            ...t,
+            orden: nuevosOrdenesOrigen.get(t.id)!
+          };
+        }
+
+        if (nuevosOrdenesDestino.has(t.id)) {
+          return {
+            ...t,
+            estado: nuevoEstado,
+            orden: nuevosOrdenesDestino.get(t.id)!
+          };
+        }
+
+        return t;
+      })
+    );
+
     this.guardar();
+  }
+
+  reordenarDentroDeColumna(columna: Tarea[], indicePrevio: number, indiceActual: number): void {
+    console.log(indicePrevio)
+    // Copiamos el array de la columna para no tocar el original
+    const columnaReordenada = [...columna];
+
+    // Reordenamos la copia según el drag and drop
+    moveItemInArray(columnaReordenada, indicePrevio, indiceActual);
+
+    // Creamos un mapa: id de tarea -> nuevo índice
+    const nuevosOrdenes = new Map(
+      columnaReordenada.map((tarea, index) => [tarea.id, index])
+    );
+    console.log(nuevosOrdenes)
+
+    // Actualizamos la signal real de tareas con los nuevos índices
+    this._tareas.update(tareas =>
+      tareas.map(t =>
+        nuevosOrdenes.has(t.id)
+          ? { ...t, orden: nuevosOrdenes.get(t.id)! }
+          : t
+      )
+    );
+
+    this.guardar();
+    console.log(indiceActual)
   }
 
   cambiarRangoFechas(inicio: number | null, fin: number | null, tipo: string): void {

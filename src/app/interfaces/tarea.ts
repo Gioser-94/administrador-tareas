@@ -5,6 +5,7 @@ export interface Tarea {
     texto: string;
     prioridad:  'Baja' | 'Media' | 'Alta';
     estado: 'backlog' | 'to-do' | 'doing' | 'done';
+    orden: number;
     fechaCreacion: number;
     fechaLimite: number;
     tags: Tag[];

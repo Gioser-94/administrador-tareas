@@ -20,12 +20,24 @@ export class List {
   readonly columnasFiltradas = this.tareaService.columnasFiltradas;
 
   drop(event: CdkDragDrop<Tarea[]>): void {
-    if (event.previousContainer === event.container) return;
+    if (event.previousContainer === event.container) {
+      this.tareaService.reordenarDentroDeColumna(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+      return;
+    };
 
-    const tarea = event.previousContainer.data[event.previousIndex];
-    const nuevoEstado = event.container.id as 'backlog' | 'to-do' | 'doing' | 'done';
+    const nuevoEstado = event.container.id as Tarea['estado'];
 
-    this.tareaService.cambiarEstado(tarea, nuevoEstado);
+    this.tareaService.transferirEntreColumnas(
+      event.previousContainer.data,
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex,
+      nuevoEstado
+    );
   };
 
 }
