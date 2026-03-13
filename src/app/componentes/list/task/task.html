@@ -1,24 +1,29 @@
-<div class="tarea" cdkDrag>
-    <div class="tarea-header" [ngClass]="prioridadAClase[tarea.prioridad]">
-        <div class="tarea-titulo">
+<article class="task-card" cdkDrag>
+
+    <header class="task-card__header" [ngClass]="prioridadAClase[tarea.prioridad]">
+        <h3 class="task-card__title">
             {{tarea.texto}}
-        </div>
-        <div class="tarea-prioridad">
+        </h3>
+        <div class="task-card__priority">
             {{tarea.prioridad}}
         </div>
-    </div>
-    <div class="tarea-body">
-        <div class="tarea-fecha-creacion">
+    </header>
+
+    <div class="task-card__body">
+        <div class="task-card__created">
             Creación: {{tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm'}}
         </div>
-        <div class="tarea-fecha-limite">
+
+        <div class="task-card__deadline">
             Límite: {{tarea.fechaLimite | date:'dd/MM/yyyy HH:mm'}}
         </div>
-        <div class="tarea-tiempo-restante">
+
+        <div class="task-card__remaining">
             Restante:
             <span app-tiempo-restante [fechaLimite]="tarea.fechaLimite"></span>
         </div>
-        <mat-chip-set>
+
+        <mat-chip-set class="task-card__tags">
             @for (tag of tarea.tags; track tag){
                 <mat-chip [style.--tag-color]="tag.color">
                     {{ tag.nombre }}
@@ -26,18 +31,22 @@
             }
         </mat-chip-set>
     </div>
-    <div class="tarea-footer">
-        <div class="botones">
+
+    <footer class="task-card__footer">
+        <div class="task-card__actions">
             <button mat-icon-button class="btn-editar" (click)="abrirFormularioEditar(tarea)">
                 <mat-icon>edit</mat-icon>
             </button>
+
             <button mat-mini-fab color="warn" (click)="borrarTarea(tarea.id)">
                 <mat-icon>delete</mat-icon>
             </button>
+            
             <mat-checkbox class="btn-checkbox" [disableRipple]="true"
                 [checked]="tareaService.estaSeleccionada(tarea.id)()"
                 (change)="tareaService.alternarGuardadoSeleccionadas(tarea.id)">
             </mat-checkbox>
         </div>
-    </div>
-</div>
+    </footer>
+
+</article>

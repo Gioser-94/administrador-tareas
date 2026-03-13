@@ -1,14 +1,18 @@
 :host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;  /* los hijos ocupan todo el ancho */
+  display: block;
   width: 100%;
   min-width: 0;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-block: 2rem;
   box-sizing: border-box;
 }
 
-h1 {
-    text-align: center;
+.task-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.task-manager__header {
+  min-height: 40px;
 }

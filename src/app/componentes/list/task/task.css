@@ -1,18 +1,70 @@
-.tarea {
+.task-card {
+  display: flex;
+  flex-direction: column;
   background: white;
-  border-radius: 6px;
-  box-shadow: 0 1px 0 rgba(9,30,66,.25);
-  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   overflow: hidden;
 }
 
-.tarea-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
+.task-card:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
 }
 
-/* PRIORIDADES */
+.task-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.task-card__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
+}
+
+.task-card__priority {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.task-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.task-card__created,
+.task-card__deadline,
+.task-card__remaining {
+  line-height: 1.3;
+}
+
+.task-card__tags {
+  margin-top: 4px;
+}
+
+.task-card__footer {
+  padding: 10px 12px;
+  border-top: 1px solid rgba(9, 30, 66, 0.08);
+}
+
+.task-card__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+/* PRIORIDADES 
 
 .prio-baja {
   background-color: #d4edda;
@@ -25,26 +77,33 @@
 .prio-alta {
   background-color: #f8d7da;
 }
+*/  
+
+.prio-baja {
+  background: #e6f7ec;
+}
+
+.prio-media {
+  background: #fff6e2;
+}
+
+.prio-alta {
+  background: #fdeaea;
+}
 
 /* BOTONES */
-
-.botones {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
 
 ::ng-deep .mat-mdc-mini-fab .mat-icon {
   color: red;
 }
 
 ::ng-deep .mat-mdc-mini-fab {
-    background-color: white !important;
-    box-shadow: none !important;
+  background-color: white !important;
+  box-shadow: none !important;
 }
 
 ::ng-deep .mat-mdc-mini-fab:hover {
-    background-color: rgba(255, 0, 0, 0.19) !important;
+  background-color: rgba(255, 0, 0, 0.19) !important;
 }
 
 ::ng-deep .mat-mdc-icon-button .mat-icon {
@@ -52,7 +111,7 @@
 }
 
 ::ng-deep .btn-editar {
-    border-radius: 12px !important;
+  border-radius: 12px !important;
 }
 
 ::ng-deep .btn-editar:hover {
@@ -60,16 +119,17 @@
 }
 
 ::ng-deep .mdc-checkbox__ripple {
-    border-radius: 12px !important;
-    background-color: grey !important;
+  border-radius: 12px !important;
+  background-color: grey !important;
 }
 
 :host ::ng-deep .btn-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
-    background-color: var(--mat-sys-primary) !important;
-    border-color: var(--mat-sys-primary) !important;
+  background-color: var(--mat-sys-primary) !important;
+  border-color: var(--mat-sys-primary) !important;
 }
 
-/* Tags */
+/* TAGS */
+
 :host ::ng-deep .mdc-evolution-chip-set__chips {
   flex-direction: row !important;
 }

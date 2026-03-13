@@ -4,10 +4,8 @@
 
 .contenedor-filtros {
   display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
+  justify-content: center;
   width: 100%;
-  gap: 25px;
 }
 
 .filtros-generales {
@@ -16,9 +14,8 @@
 }
 
 .filtros-seleccion {
-  min-width: 250px;
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 8px;
 }
 

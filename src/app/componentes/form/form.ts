@@ -91,7 +91,6 @@ export class Form implements OnInit{
       nombre: tag.nombre,
       color: ''
     }));
-    console.log(tagsSinColor);
     this.tareaService.anadirTags(tagsSinColor);
 
     // Resetea todos los valores
@@ -128,9 +127,7 @@ export class Form implements OnInit{
 
   //------------TAGS-------------
   anadirTag(tag: Tag) {
-    console.log(tag.nombre)
     const tagsActuales: Tag[] = this.tareaForm.controls.tags.value as Tag[];
-    console.log(tagsActuales);
 
     // Evita duplicados
     if (tagsActuales.some(t => t.nombre === tag.nombre)) return;
